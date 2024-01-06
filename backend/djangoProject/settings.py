@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-v7=2swdv^%2=ddeog!unc#ro)vz=)7hk$8vxvt4o*n8e8)nm=c
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -48,19 +48,28 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+CORS_ALLOW_CREDENTIALS = True
+# CORS_ALLOW_CREDENTIALS = True
+
+
 CORS_ALLOWED_ORIGINS = [
-    "http://react_frontend:3000",  # Use the service name, replace 3000 with your actual port
+    "http://react_frontend:3000",
+    "http://localhost:3000",
+    "http://react_container:3000",  # Use the service name, replace 3000 with your actual port
     # Add more origins if needed
 ]
+
+
 ROOT_URLCONF = 'djangoProject.urls'
 
 TEMPLATES = [

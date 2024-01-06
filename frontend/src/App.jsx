@@ -1,11 +1,24 @@
-import { useState } from 'react'
+import { useState,useEffect } from 'react'
+import axios from 'axios'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
 function App() {
   const [count, setCount] = useState(0)
+  useEffect(()=>{
+    async function testing(){
 
+      try{
+const response = await axios.get('http://localhost:8000/api/index/');
+console.log(response)
+      }catch(error){
+        console.log(error)
+      }
+    }
+
+testing()
+  },[])
   return (
     <>
       <div>
