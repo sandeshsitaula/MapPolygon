@@ -1,0 +1,43 @@
+version: '3.3'
+
+services:
+  # PostgreSQL service
+  db:
+    image: postgis/postgis
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - mynetwork
+    container_name: postgres_container
+
+  # Django service
+  django:
+    build:
+      context: backend/.
+      dockerfile: Dockerfile
+    image: django_postgis_app
+    environment:
+      - DEBUG=True
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB_NAME=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+    networks:
+      - mynetwork
+    volumes:
+      - ./backend:/app  # Mount your project directory to the /app directory in the container
+    container_name: django_container
+
+networks:
+  mynetwork:
+    driver: bridge
+
