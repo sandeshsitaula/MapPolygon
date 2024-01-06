@@ -1,5 +1,4 @@
-## Small Assignment With Docker,Django and Postgis
-
+## Map Polygon
 ## Installing And Running Instruction
 ``` bash 
 sudo docker-compose up --build #once and run without --build if dockerfile is not changed
