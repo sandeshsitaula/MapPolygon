@@ -37,6 +37,24 @@ services:
       - ./backend:/app  # Mount your project directory to the /app directory in the container
     container_name: django_container
 
+  react_frontend:
+    build:
+      context: frontend/.
+      dockerfile: Dockerfile
+    image: react_frontend_app
+    environment: 
+      - REACT_APP_URL=http://django:8000/
+    ports:
+      - "3000:3000"
+    networks: 
+      - mynetwork
+    volumes:
+      - ./frontend:/app/frontend/
+    depends_on:
+      - django
+    container_name: react_container
+
+
 networks:
   mynetwork:
     driver: bridge

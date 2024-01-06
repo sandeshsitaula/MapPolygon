@@ -52,3 +52,6 @@ local_settings.py
 
 # Ignore compiled transla
 
+
+
+node_modules/
