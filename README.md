@@ -2,21 +2,11 @@
 
 ## Installing And Running Instruction
 ``` bash 
-sudo docker-compose up --build
+sudo docker-compose up --build #once and run without --build if dockerfile is not changed
 ```
 
 #### Will download all the necessary requirements specified in Dockerfile and run both the database based on postgis image.
 
-## Usage
-``` bash
-curl localhost/api/index/ # just for testing whether the server is running or not
-
-curl localhost/api/addLocation/ # adds a random location to Point column provided by django.contrib.gis.models.db . It represents latitude and Longitude
-
-curl localhost/api/viewLocation/1/ # for getting that specific location
-
-curl localhost/api/allLocation/ #for agetting all the location
-```
 
 #### Note:docker-entrypoint.sh is used for running migrate and creatign the intial .env file which contains database information.
 
