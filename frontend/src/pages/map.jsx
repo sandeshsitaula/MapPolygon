@@ -5,7 +5,7 @@ import { EditControl } from "react-leaflet-draw";import { Icon } from "leaflet";
 import { useRef } from "react";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
-
+import axios from 'axios'
 delete L.Icon.Default.prototype._getIconUrl;
 
 L.Icon.Default.mergeOptions({
@@ -31,16 +31,28 @@ export function AddMap() {
       setMapLayers((layers) => [
         ...layers,
 
-        { id: _leaflet_id, latlngs: layer._latlngs[0] },
+        { leaflet_id: _leaflet_id, latlngs: layer._latlngs[0] },
       ]);
     }
 
   };
-useEffect(()=>{
-  console.log(MapLayers)
-})
+
+ const handleClick=async()=>{
+   if (MapLayers.length==0){
+     alert("create atleast one polygon")
+  }
+      try{
+const response = await axios.post('http://localhost:8000/api/index/',
+MapLayers
+);
+console.log(response)
+      }catch(error){
+        console.log(error)
+      }
+  }
 
   return (
+    <>
      <MapContainer center={center} zoom={ZOOM_LEVEL} style={{ height: '500px', width: '100%' }} ref={mapRef}>
       <FeatureGroup>
                 <EditControl
@@ -61,5 +73,8 @@ useEffect(()=>{
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'      />
     </MapContainer>
+
+    <button onClick={handleClick}>Submit</button>
+    </>
   );
 }

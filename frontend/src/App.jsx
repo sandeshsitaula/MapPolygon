@@ -7,19 +7,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import {AddMap} from './pages/map'
 import {Home} from './pages/home';
 function App() {
-  useEffect(()=>{
-    async function testing(){
 
-      try{
-const response = await axios.get('http://localhost:8000/api/index/');
-console.log(response)
-      }catch(error){
-        console.log(error)
-      }
-    }
-
-testing()
-  },[])
   return (
     <>
        <Router>
