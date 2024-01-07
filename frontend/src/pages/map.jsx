@@ -24,7 +24,6 @@ export function AddMap() {
   const mapRef = useRef();
 
   const _onCreate = (e) => {
-    console.log(e)
      const { layerType, layer } = e;
     if (layerType === "polygon") {
       const { _leaflet_id } = layer;
@@ -37,7 +36,6 @@ export function AddMap() {
 
   };
    const _onEdited = (e) => {
-    console.log(e);
     const {
       layers: { _layers },
     } = e;
@@ -45,7 +43,7 @@ export function AddMap() {
     Object.values(_layers).map(({ _leaflet_id, editing }) => {
       setMapLayers((layers) =>
         layers.map((l) =>
-          l.id === _leaflet_id
+          l.leaflet_id === _leaflet_id
             ? { ...l, latlngs: { ...editing.latlngs[0] } }
             : l
         )
@@ -54,13 +52,12 @@ export function AddMap() {
   };
 
   const _onDeleted = (e) => {
-    console.log(e);
     const {
       layers: { _layers },
     } = e;
 
     Object.values(_layers).map(({ _leaflet_id }) => {
-      setMapLayers((layers) => layers.filter((l) => l.id !== _leaflet_id));
+      setMapLayers((layers) => layers.filter((l) => l.leaflet_id !== _leaflet_id));
     });
   };
 
@@ -73,6 +70,7 @@ const response = await axios.post('http://localhost:8000/api/addPolygon/',
 MapLayers
 );
 console.log(response)
+alert(response.data.msg)
       }catch(error){
         console.log(error)
       }

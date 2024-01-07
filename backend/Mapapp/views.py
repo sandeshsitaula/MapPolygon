@@ -15,19 +15,16 @@ def AddPolygon(request):
             print(item)
             leafletId=item['leaflet_id']
             latlngs=item['latlngs']
-            print("hello")
             polygon=Polygon.objects.create(leafletId=leafletId)
-            print("hello1")
             for latlng in latlngs:
                 lat=latlng['lat']
                 lng=latlng['lng']
-                point=Points.objects.create(point=Point(x=lat,y=lng))
+                point,created=Points.objects.get_or_create(point=Point(x=lat,y=lng))
 
                 polygon.points.add(point)
 
             polygon.save
-            print(polygon)
-        return Response({'msg',"success"},status=200)
+        return Response({'msg':"successfull Transaction"},status=200)
     except Exception as e:
         error=str(e)
         print(error)
