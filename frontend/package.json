@@ -11,8 +11,16 @@
   },
   "dependencies": {
     "axios": "^1.6.5",
+    "bootstrap": "^5.3.2",
+    "leaflet": "^1.9.4",
+    "leaflet-draw": "^1.0.4",
+    "maps-api-for-javascript": "^0.0.1-security",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-bootstrap": "^2.9.2",
+    "react-dom": "^18.2.0",
+    "react-leaflet": "^4.2.1",
+    "react-leaflet-draw": "^0.20.4",
+    "react-router-dom": "^6.21.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",
