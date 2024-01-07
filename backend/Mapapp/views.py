@@ -50,9 +50,14 @@ def GetAllPolygons(request):
 
 @api_view(['GET'])
 def GetPolygon(request,polygonId):
+    try:
         polygon=Polygon.objects.get(id=polygonId)
         print(polygon)
         serializer=PolygonSerializer(polygon)
         print(serializer.data)
         data={'data':serializer.data}
         return Response(data,status=200)
+    except Exception as e:
+        error=str(e)
+        print(error)
+        return Response({'error':f"Unexpected Error {error}"},status=400)
