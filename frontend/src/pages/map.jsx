@@ -24,6 +24,7 @@ export function AddMap() {
   const mapRef = useRef();
 
   const _onCreate = (e) => {
+    console.log(e)
      const { layerType, layer } = e;
     if (layerType === "polygon") {
       const { _leaflet_id } = layer;
@@ -36,20 +37,26 @@ export function AddMap() {
 
   };
    const _onEdited = (e) => {
+     console.log(e)
     const {
-      layers: { _layers },
+     layers
     } = e;
+    const {_layers}=layers
 
     Object.values(_layers).map(({ _leaflet_id, editing }) => {
+      console.log(editing.latlngs[0])
       setMapLayers((layers) =>
         layers.map((l) =>
           l.leaflet_id === _leaflet_id
-            ? { ...l, latlngs: { ...editing.latlngs[0] } }
+            ? { ...l, latlngs:  [...editing.latlngs[0][0]] }
             : l
         )
       );
     });
   };
+  useEffect(()=>{
+    console.log(MapLayers)
+  })
 
   const _onDeleted = (e) => {
     const {
