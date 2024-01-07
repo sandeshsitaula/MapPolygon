@@ -23,7 +23,7 @@ export function AddMap() {
   const ZOOM_LEVEL = 12;
   const mapRef = useRef();
 
-  const _created = (e) => {
+  const _onCreate = (e) => {
     console.log(e)
      const { layerType, layer } = e;
     if (layerType === "polygon") {
@@ -36,13 +36,40 @@ export function AddMap() {
     }
 
   };
+   const _onEdited = (e) => {
+    console.log(e);
+    const {
+      layers: { _layers },
+    } = e;
+
+    Object.values(_layers).map(({ _leaflet_id, editing }) => {
+      setMapLayers((layers) =>
+        layers.map((l) =>
+          l.id === _leaflet_id
+            ? { ...l, latlngs: { ...editing.latlngs[0] } }
+            : l
+        )
+      );
+    });
+  };
+
+  const _onDeleted = (e) => {
+    console.log(e);
+    const {
+      layers: { _layers },
+    } = e;
+
+    Object.values(_layers).map(({ _leaflet_id }) => {
+      setMapLayers((layers) => layers.filter((l) => l.id !== _leaflet_id));
+    });
+  };
 
  const handleClick=async()=>{
    if (MapLayers.length==0){
      alert("create atleast one polygon")
   }
       try{
-const response = await axios.post('http://localhost:8000/api/index/',
+const response = await axios.post('http://localhost:8000/api/addPolygon/',
 MapLayers
 );
 console.log(response)
@@ -57,8 +84,9 @@ console.log(response)
       <FeatureGroup>
                 <EditControl
                   position="topright"
-                  onCreated={_created}
-                  draw={
+                  onCreated={_onCreate}
+                  onEdited={_onEdited}
+                  onDeleted={_onDeleted}                  draw={
                     {
                        rectangle: false,
                     circle: false,
