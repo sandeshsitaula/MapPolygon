@@ -56,26 +56,29 @@ export function AddMap() {
   //     });
   //   };
 
-  const _onEdited = (e) => {
-    console.log(e);
-    const { layers } = e;
-    const { _layers } = layers;
+    const onEdited = (layers) => {
+        //polygons that are changed are stored in changedPolys array
+        const changedPolys = Object.values(layers._layers).map((layer) => {
+            const latlngs = layer._latlngs[0].map((latlng) => {
+                return {lat:latlng.lat,lng: latlng.lng};
+            });
+            console.log(layers._layers)
+            console.log(latlngs)
+            return { leaflet_id: layers._layers._leaflet_id, latlngs: latlngs };
+        });
 
-    // Extracting the updated layers
-    const updatedLayers = Object.values(_layers).map(({ _leaflet_id, editing }) => ({
-      leaflet_id: _leaflet_id,
-      latlngs: [...editing.latlngs[0][0]],
-    }));
-
-    // Updating the state by replacing the existing layers with the updated ones
-    setMapLayers((existingLayers) =>
-      existingLayers.map((existingLayer) => {
-        const updatedLayer = updatedLayers.find((ul) => ul.leaflet_id === existingLayer.leaflet_id);
-        return updatedLayer ? updatedLayer : existingLayer;
-      })
-    );
-  };
-
+        //update state of all the polygons. replace polygons with changedPolys
+        changedPolys.forEach((changedPoly) => {
+            setMapLayers((polygons) => {
+                return polygons.map((polygon) => {
+                    if (polygon.leaflet_id === changedPoly.leaflet_id) {
+                        return { id: changedPoly.leaflet_id, latlngs: changedPoly.latlngs };
+                    }
+                    return polygon;
+                });
+            });
+        });
+    };
 
 
   useEffect(() => {
@@ -115,7 +118,7 @@ export function AddMap() {
           <EditControl
             position="topright"
             onCreated={_onCreate}
-            onEdited={_onEdited}
+            onEdited={(e)=>{onEdited(e.layers)}}
             onDeleted={_onDeleted}
             draw={
               {
@@ -125,9 +128,7 @@ export function AddMap() {
                 marker: false,
                 polyline: false,
               }}
-            edit={{
-              edit: false
-            }}
+
 
           />
         </FeatureGroup>

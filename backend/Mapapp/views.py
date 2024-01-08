@@ -21,23 +21,27 @@ def AddPolygon(request):
             existing_polygon = Polygon.objects.filter(
                 points__point__in=[Point(lat, lng) for lat, lng in provided_coordinates]
             ).first()
+            print(existing_polygon)
 
             if existing_polygon:
                 print(f"Polygon with coordinates {latlngs} already exists.")
                 # Handle the case where all coordinates match the existing polygon
                 # You may want to do something specific in this case
-                continue  # Skip the rest of the loop if a matching polygon is found
+                # continue  # Skip the rest of the loop if a matching polygon is found
 
+                new_polygon=existing_polygon
+                new_polygon.points.clear()
             # If not found or not all coordinates match, create a new polygon
-            new_polygon = Polygon.objects.create()
+            else:
+                new_polygon = Polygon.objects.create()
             for latlng in latlngs:
                 lat = latlng['lat']
                 lng = latlng['lng']
                 print(lat, lng)
-                point, created = Points.objects.get_or_create(point=Point(x=lat, y=lng))
+                point = Points.objects.create(point=Point(x=lat, y=lng))
                 new_polygon.points.add(point)
 
-        return Response({'msg':'Successfully added'})
+        return Response({'msg':'Successfully added','data':PolygonSerializer(new_polygon).data})
 
     except Exception as e:
         print(f"Error: {e}")
