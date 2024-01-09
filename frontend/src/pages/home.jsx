@@ -17,6 +17,25 @@ function AddNew() {
 }
 
 function ShowSaved({ savedData }) {
+    const parsePolygon = (polygon) => {
+  // Check if the polygon format includes SRID information
+  const isSRIDIncluded = polygon.startsWith('SRID=4326;');
+
+  // Extract the coordinates string (remove SRID information if present)
+  const coordinatesString = isSRIDIncluded ? polygon.substring(16) : polygon;
+
+  // Split the coordinates into individual points
+  const points = coordinatesString
+    .split(',')
+    .map(coord => coord.trim().split(/\s+/).map(c => parseFloat(c)));
+  // Swap latitude and longitude for Leaflet
+
+      points.shift();
+  const polygonCoordinates = points.map(point => [point[1], point[0]]);
+    console.log(polygonCoordinates)
+  return polygonCoordinates;
+};
+
     const [center, setCenter] = useState({ lat: 51.505, lng: -0.09 });
     const [MapLayers, setMapLayers] = useState([])
     const ZOOM_LEVEL = 10;
@@ -27,14 +46,10 @@ function ShowSaved({ savedData }) {
             <h3>Your Saved Data</h3>
 
             <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }}>
-                {savedData ? savedData.map((data) => {
-                    const coordinates = data.points.map(item => {
-                        console.log(item)
-                        const [longitude, latitude] = item.point
-                            .match(/-?\d+\.\d+/g)
-                            .map(coord => parseFloat(coord));
-                        return [longitude, latitude];
-                    });
+                  {savedData ?
+        savedData.map((data) => {
+          const polygonCoordinates = parsePolygon(data.polygon);
+
 
                     return (
                         <Link key={data.id} to={`/view/${data.id}`} style={{ margin: '20px', width: '350px', height: '300px' }}>
@@ -47,7 +62,7 @@ function ShowSaved({ savedData }) {
                                     <TileLayer
                                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' />
-                                    <Polygon positions={coordinates} pathOptions={{ color: 'blue' }} />
+                                    <Polygon positions={polygonCoordinates} pathOptions={{ color: 'blue' }} />
 
                                 </MapContainer>
                             </div>

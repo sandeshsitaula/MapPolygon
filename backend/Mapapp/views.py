@@ -2,51 +2,56 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 import json
-from django.contrib.gis.geos import Polygon as GeosPolygon, Point
+from django.contrib.gis.geos import Polygon as GeosPolygon,Point,LinearRing
 from .serializers import PolygonSerializer
-from .models import Points,Polygon
+from .models import Polygon
 # Create your views here.
+
+#For adding a new polygon
 @api_view(['POST'])
 def AddPolygon(request):
     try:
         data = json.loads(request.body)
-        print(data)
+
         for item in data:
             latlngs = item['latlngs']
 
-            # Create a set of tuples from the latlngs for easy comparison
-            provided_coordinates = set((latlng['lat'], latlng['lng']) for latlng in latlngs)
+            #must be greater than 3
+            if len(latlngs) >= 3:
+                #required because Polygon from geos expects last coordinates to be same
+                latlngs.append(latlngs[0])
+                print(latlngs)
+
+
+            # Create a list
+            points = [Point(latlng['lng'], latlng['lat']) for latlng in latlngs]
+
+            # Create a LinearRing directly
+            linear_ring = LinearRing(points)
+            polygon_geometry = GeosPolygon(linear_ring)
+
+            polygon_wkt = polygon_geometry.wkt
 
             # Check if there is an existing polygon with exactly the same coordinates
-            existing_polygon = Polygon.objects.filter(
-                points__point__in=[Point(lat, lng) for lat, lng in provided_coordinates]
-            ).first()
-            print(existing_polygon)
+            existing_polygon = Polygon.objects.filter(polygon__exact=polygon_wkt).first()
 
             if existing_polygon:
                 print(f"Polygon with coordinates {latlngs} already exists.")
-                # Handle the case where all coordinates match the existing polygon
+                # Handle the case where a matching polygon is found
                 # You may want to do something specific in this case
-                # continue  # Skip the rest of the loop if a matching polygon is found
 
-                new_polygon=existing_polygon
-                new_polygon.points.clear()
-            # If not found or not all coordinates match, create a new polygon
-            else:
-                new_polygon = Polygon.objects.create()
-            for latlng in latlngs:
-                lat = latlng['lat']
-                lng = latlng['lng']
-                print(lat, lng)
-                point = Points.objects.create(point=Point(x=lat, y=lng))
-                new_polygon.points.add(point)
+                existing_polygon.delete()
 
-        return Response({'msg':'Successfully added','data':PolygonSerializer(new_polygon).data})
+            # If not found, create a new polygon
+            new_polygon = Polygon.objects.create(polygon=polygon_geometry)
+        return Response({'msg': 'Successfully added', 'data': PolygonSerializer(new_polygon).data})
 
     except Exception as e:
         print(f"Error: {e}")
         error=str(e)
         return Response({'error':f"Error...{error}"},status=400)
+
+
 
 #Get all polygons used in index page in frontned
 @api_view(['GET'])

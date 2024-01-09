@@ -1,5 +1,4 @@
 from django.contrib import admin
-from .models import Points,Polygon
+from .models import Polygon
 # Register your models here.
-admin.site.register(Points)
 admin.site.register(Polygon)
