@@ -17,28 +17,23 @@ function AddNew() {
 }
 
 function ShowSaved({ savedData }) {
+
     const parsePolygon = (polygon) => {
-  // Check if the polygon format includes SRID information
-  const isSRIDIncluded = polygon.startsWith('SRID=4326;');
+        // Check if the polygon format includes SRID information
+        const isSRIDIncluded = polygon.startsWith('SRID=4326;');
 
-  // Extract the coordinates string (remove SRID information if present)
-  const coordinatesString = isSRIDIncluded ? polygon.substring(16) : polygon;
+        // Extract the coordinates string (remove SRID information if present)
+        const coordinatesString = isSRIDIncluded ? polygon.substring(20, polygon.length - 2) : polygon;
+        // Split the coordinates into individual points
+        const points = coordinatesString
+            .split(',')
+            .map(coord => coord.trim().split(/\s+/).map(c => parseFloat(c)));
+        // Swap latitude and longitude for Leaflet
 
-  // Split the coordinates into individual points
-  const points = coordinatesString
-    .split(',')
-    .map(coord => coord.trim().split(/\s+/).map(c => parseFloat(c)));
-  // Swap latitude and longitude for Leaflet
-
-      points.shift();
-  const polygonCoordinates = points.map(point => [point[1], point[0]]);
-    console.log(polygonCoordinates)
-  return polygonCoordinates;
-};
-
-    const [center, setCenter] = useState({ lat: 51.505, lng: -0.09 });
-    const [MapLayers, setMapLayers] = useState([])
-    const ZOOM_LEVEL = 10;
+        const polygonCoordinates = points.map(point => [point[1], point[0]]);
+        return polygonCoordinates;
+    };
+    const ZOOM_LEVEL = 15;
     const mapRef = useRef();
 
     return (
@@ -46,30 +41,30 @@ function ShowSaved({ savedData }) {
             <h3>Your Saved Data</h3>
 
             <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }}>
-                  {savedData ?
-        savedData.map((data) => {
-          const polygonCoordinates = parsePolygon(data.polygon);
+                {savedData ?
+                    savedData.map((data) => {
+                        const polygonCoordinates = parsePolygon(data.polygon);
 
 
-                    return (
-                        <Link key={data.id} to={`/view/${data.id}`} style={{ margin: '20px', width: '350px', height: '300px' }}>
-                            <div id={data.id} style={{ padding: '10px', backgroundColor: 'gray', color: 'white' }}>
-                                Polygon Id:{data.id}
+                        return (
+                            <Link key={data.id} to={`/view/${data.id}`} style={{ margin: '20px', width: '350px', height: '300px' }}>
+                                <div id={data.id} style={{ padding: '10px', backgroundColor: 'gray', color: 'white' }}>
+                                    Polygon Id:{data.id}
 
 
-                                <MapContainer center={center} zoomControl={false} zoom={ZOOM_LEVEL} style={{ height: '250px', width: '100%' }} ref={mapRef}>
+                                    <MapContainer center={polygonCoordinates[0]} zoomControl={false} zoom={ZOOM_LEVEL} style={{ height: '250px', width: '100%' }} ref={mapRef}>
 
-                                    <TileLayer
-                                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' />
-                                    <Polygon positions={polygonCoordinates} pathOptions={{ color: 'blue' }} />
+                                        <TileLayer
+                                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' />
+                                        <Polygon positions={polygonCoordinates} pathOptions={{ color: 'blue' }} />
 
-                                </MapContainer>
-                            </div>
-                        </Link>
+                                    </MapContainer>
+                                </div>
+                            </Link>
 
-                    )
-                }) : "No Data To Show Right Now"}
+                        )
+                    }) : "No Data To Show Right Now"}
             </div>
         </div>
     )
@@ -80,7 +75,6 @@ export function Home() {
         async function GetData() {
             try {
                 const response = await axios.get('http://localhost:8000/api/getAllPolygons/')
-                console.log(response.data.data)
                 setSavedData(response.data.data)
 
             } catch (error) {

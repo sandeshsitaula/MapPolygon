@@ -8,21 +8,25 @@ export function ViewMap() {
   const { id } = useParams();
   const [coordinates, setCoordinates] = useState([]);
 
+  const [center, setCenter] = useState({ lat: 51.505, lng: -0.09 });
   useEffect(() => {
     async function getData() {
       try {
         const response = await axios.get(`http://localhost:8000/api/getPolygon/${id}/`);
-        const responseData = response.data.data.points;
+        const polygon = response.data.data.polygon;
         // Convert coordinates to proper format
-        const newCoordinates = responseData.map(item => {
-          const [longitude, latitude] = item.point
-            .match(/-?\d+\.\d+/g)
-            .map(coord => parseFloat(coord));
-          return [longitude, latitude];
-        });
 
-        setCoordinates(newCoordinates);
-        setCenter({ lat: newCoordinates[0][0], lng: newCoordinates[0][1] })
+        const isSRIDIncluded = polygon.startsWith('SRID=4326;');
+        // Extract the coordinates string (remove SRID information if present)
+        const coordinatesString = isSRIDIncluded ? polygon.substring(20, polygon.length - 2) : polygon;
+        // Split the coordinates into individual points
+        const points = coordinatesString
+          .split(',')
+          .map(coord => coord.trim().split(/\s+/).map(c => parseFloat(c)));
+        // Swap latitude and longitude for Leaflet
+        const polygonCoordinates = points.map(point => [point[1], point[0]]);
+
+        setCoordinates(polygonCoordinates);
       } catch (error) {
         console.log(error);
         alert(error.response?.data?.error || 'An error occurred while fetching data');
@@ -31,13 +35,18 @@ export function ViewMap() {
     getData();
   }, [id]);
   useEffect(() => {
-    console.log(coordinates)
+    if (coordinates.length > 0) {
+      setCenter({ lat: coordinates[0][0], lng: coordinates[0][1] })
+    }
+  }, [coordinates])
+
+  useEffect(() => {
+    console.log(center)
   })
-  const [center, setCenter] = useState({ lat: 51.505, lng: -0.09 });
-  const [MapLayers, setMapLayers] = useState([])
   const ZOOM_LEVEL = 12;
   const mapRef = useRef();
   return (
+
     <MapContainer center={center} zoom={ZOOM_LEVEL} style={{ height: '500px', width: '100%' }} ref={mapRef}>
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

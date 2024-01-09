@@ -37,48 +37,30 @@ export function AddMap() {
     }
 
   };
-  //    const _onEdited = (e) => {
-  //      console.log(e)
-  //  {
-  //      layers
-  //     } = e;
-  //     const {_layers}=layers
-  //
-  //     Object.values(_layers).map(({ _leaflet_id, editing }) => {
-  //       console.log(editing.latlngs[0])
-  //       setMapLayers((layers) =>
-  //         layers.map((l) =>
-  //           l.leaflet_id === _leaflet_id
-  //             ? { ...l, latlngs:  [...editing.latlngs[0][0]] }
-  //             : l
-  //         )
-  //       );
-  //     });
-  //   };
 
-    const onEdited = (layers) => {
-        //polygons that are changed are stored in changedPolys array
-        const changedPolys = Object.values(layers._layers).map((layer) => {
-            const latlngs = layer._latlngs[0].map((latlng) => {
-                return {lat:latlng.lat,lng: latlng.lng};
-            });
-            console.log(layers._layers)
-            console.log(latlngs)
-            return { leaflet_id: layers._layers._leaflet_id, latlngs: latlngs };
-        });
+  const onEdited = (layers) => {
+    //polygons that are changed are stored in changedPolys array
+    const changedPolys = Object.values(layers._layers).map((layer) => {
+      const latlngs = layer._latlngs[0].map((latlng) => {
+        return { lat: latlng.lat, lng: latlng.lng };
+      });
+      console.log(layers._layers)
+      console.log(latlngs)
+      return { leaflet_id: layers._layers._leaflet_id, latlngs: latlngs };
+    });
 
-        //update state of all the polygons. replace polygons with changedPolys
-        changedPolys.forEach((changedPoly) => {
-            setMapLayers((polygons) => {
-                return polygons.map((polygon) => {
-                    if (polygon.leaflet_id === changedPoly.leaflet_id) {
-                        return { id: changedPoly.leaflet_id, latlngs: changedPoly.latlngs };
-                    }
-                    return polygon;
-                });
-            });
+    //update state of all the polygons. replace polygons with changedPolys
+    changedPolys.forEach((changedPoly) => {
+      setMapLayers((polygons) => {
+        return polygons.map((polygon) => {
+          if (polygon.leaflet_id === changedPoly.leaflet_id) {
+            return { id: changedPoly.leaflet_id, latlngs: changedPoly.latlngs };
+          }
+          return polygon;
         });
-    };
+      });
+    });
+  };
 
 
   useEffect(() => {
@@ -118,7 +100,7 @@ export function AddMap() {
           <EditControl
             position="topright"
             onCreated={_onCreate}
-            onEdited={(e)=>{onEdited(e.layers)}}
+            onEdited={(e) => { onEdited(e.layers) }}
             onDeleted={_onDeleted}
             draw={
               {
