@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import L from "leaflet";
 import { MapContainer, TileLayer, FeatureGroup } from "react-leaflet";
-import { EditControl } from "react-leaflet-draw"; import { Icon } from "leaflet";
+import { EditControl } from "react-leaflet-draw";
+import { Icon } from "leaflet";
 import { useRef } from "react";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
 import axios from 'axios'
 import { Button } from 'react-bootstrap'
+import {useNavigate} from 'react-router-dom'
 delete L.Icon.Default.prototype._getIconUrl;
 
 L.Icon.Default.mergeOptions({
@@ -23,7 +25,7 @@ export function AddMap() {
   const [MapLayers, setMapLayers] = useState([])
   const ZOOM_LEVEL = 12;
   const mapRef = useRef();
-
+  const navigate=useNavigate()
   const _onCreate = (e) => {
     console.log(e)
     const { layerType, layer } = e;
@@ -63,9 +65,6 @@ export function AddMap() {
   };
 
 
-  useEffect(() => {
-    console.log(MapLayers)
-  })
 
   const _onDeleted = (e) => {
     const {
@@ -121,6 +120,7 @@ export function AddMap() {
 
       <div style={{ backgroundColor: '#242424', paddingTop: '50px', textAlign: 'center' }}>
         <Button variant="outline-primary" onClick={handleClick}>Save Data(Polygon)</Button>
+        <Button style={{marginLeft:'20px'}}variant="outline-secondary" onClick={()=>{navigate('/')}}>Go Home</Button>
       </div>
     </>
   );
