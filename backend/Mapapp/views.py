@@ -78,3 +78,43 @@ def GetPolygon(request,polygonId):
         error=str(e)
         print(error)
         return Response({'error':f"Unexpected Error {error}"},status=400)
+
+#delete polygon given a polygon id
+@api_view(['GET'])
+def DeletePolygon(request,polygonId):
+    try:
+        polygon=Polygon.objects.get(id=polygonId)
+        polygon.delete()
+        return Response({'message':f"Polygon Deleted sucessfully"},status=200)
+    except Exception as e:
+        error=str(e)
+        return Response({'error':f"Unexpected Error occured"},status=400)
+
+#update a polygon given an index
+@api_view(['POST'])
+def UpdatePolygon(request,polygonId):
+    try:
+        polygonData=Polygon.objects.get(id=polygonId)
+        data = json.loads(request.body)
+
+        latlngs = data['latlngs']
+
+            #must be greater than 3
+        if len(latlngs) >= 3:
+                #required because Polygon from geos expects last coordinates to be same
+                latlngs.append(latlngs[0])
+
+            # Create a list
+        points = [Point(latlng['lng'], latlng['lat']) for latlng in latlngs]
+
+            # Create a LinearRing directly
+        linear_ring = LinearRing(points)
+        polygon_geometry = GeosPolygon(linear_ring)
+
+        polygonData.polygon=polygon_geometry
+        polygonData.save()
+        return Response({'msg': 'Successfully updated', 'data': PolygonSerializer(new_polygon).data})
+
+    except Exception as e:
+        error=str(e)
+        return Response({'msg':f"Unexpected error {error}"},status=400)
