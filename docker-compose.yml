@@ -27,6 +27,7 @@ services:
       - POSTGRES_DB_NAME=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+      - OPENCAGE_API=10a9e27df30d48b9bf5ca88ad1f4ad44
     depends_on:
       - db
     ports:

@@ -5,10 +5,11 @@ from django.contrib.gis.geos import Point
 from .models import Customer
 from .serializers import CustomerSerializer
 import requests
+import os
 
 # For converting location to coordinates
 def geocode_location(country, state, city):
-    api_key = '10a9e27df30d48b9bf5ca88ad1f4ad44'
+    api_key=os.getenv('OPENCAGE_API')
     base_url = 'https://api.opencagedata.com/geocode/v1/json'
 
     params = {
