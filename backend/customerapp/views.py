@@ -24,7 +24,7 @@ def geocode_location(country, state, city):
         geometry = data['results'][0]['geometry']
         return geometry['lng'], geometry['lat']
     else:
-        return None
+        return None,None
 
 @api_view(['POST'])
 def AddCustomer(request):
@@ -38,7 +38,9 @@ def AddCustomer(request):
         city=data.get('city')
         zipCode=data.get('zipCode')
         lng, lat = geocode_location(country, state, city)
-        print("heh")
+
+        if (lng is None or lat is None):
+            return Response({'error':f'Unexpected errro couldnot find your location try again after correcting it'},401)
 
         newCustomer=Customer(firstName=firstName,lastName=lastName,country=country,state=state,phoneNumber=phoneNumber,city=city,zipCode=zipCode,            point=Point(lat, lng))
 

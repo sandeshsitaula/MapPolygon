@@ -30,9 +30,15 @@ export function AddCustomer(){
           alert("insert all the values properly")
           return
     }
-    const response=await AxiosInstance.post('api/customer/postCustomer',customer)
+    try{
+    const response=await AxiosInstance.post('api/customer/addCustomer/',customer)
+    alert(response.data.message)
 
-       console.log(response)
+       console.log(response)}
+       catch(error){
+           console.log(error)
+           alert(error.response.error)
+    }
     }
 useEffect(()=>{
     console.log(customer)
@@ -45,15 +51,15 @@ useEffect(()=>{
             <h5 style={{textAlign:'center',paddingBottom:'20px'}}>Add New Customer</h5>
             <Col sm={9} md={12} style={{display:'flex',justifyContent:'center'}}>
             <Form style={{width:'80%'}}>
-            <Form.Control style={{marginBottom:'15px'}} onChange={handleChange} type="text" name="firstName" placeholder="First Name" />
-            <Form.Control style={{marginBottom:'15px'}}  onChange={handleChange}type="text" name="lastName" placeholder="Last Name" />
-            <Form.Control style={{marginBottom:'15px'}}  onChange={handleChange}type="text" name="country" placeholder="Country" />
-            <Form.Control style={{marginBottom:'15px'}}  onChange={handleChange}type="text" name="city" placeholder="City" />
-            <Form.Control style={{marginBottom:'15px'}}  onChange={handleChange}type="text" name="state" placeholder="State" />
-            <Form.Control style={{marginBottom:'15px'}}  onChange={handleChange}type="text" name="zipCode" placeholder="Zip Code" />
-            <Form.Control style={{marginBottom:'25px'}}  onChange={handleChange}type="text" name="phoneNumber" placeholder="Phone Number (eg:+977-90000000)" />
+            <Form.Control value={customer.firstName} style={{marginBottom:'15px'}} onChange={handleChange} type="text" name="firstName" placeholder="First Name" />
+            <Form.Control value={customer.lastName} style={{marginBottom:'15px'}}  onChange={handleChange}type="text" name="lastName" placeholder="Last Name" />
+            <Form.Control value={customer.country} style={{marginBottom:'15px'}}  onChange={handleChange}type="text" name="country" placeholder="Country" />
+            <Form.Control value={customer.city}style={{marginBottom:'15px'}}  onChange={handleChange}type="text" name="city" placeholder="City" />
+            <Form.Control value={customer.state} style={{marginBottom:'15px'}}  onChange={handleChange}type="text" name="state" placeholder="State" />
+            <Form.Control value={customer.zipCode} style={{marginBottom:'15px'}}  onChange={handleChange}type="text" name="zipCode" placeholder="Zip Code" />
+            <Form.Control value={customer.phoneNumber} style={{marginBottom:'25px'}}  onChange={handleChange}type="text" name="phoneNumber" placeholder="Phone Number (eg:+977-90000000)" />
             <div style={{textAlign:'center',marginBottom:'30px'}}>
-            <Button  style={{width:'75%'}}variant="outline-success">Submit Customer </Button>
+            <Button  style={{width:'75%'}}variant="outline-success" onClick={handleSubmit}>Submit Customer </Button>
             <Button  style={{width:'75%',marginTop:'25px'}}variant="outline-danger">Go Back(Home)</Button>
             </div>
             </Form>
