@@ -12,14 +12,14 @@ export function ViewMap() {
 
   const [center, setCenter] = useState({ lat: 51.505, lng: -0.09 });
   const handleDelete=async()=>{
-  const response=await axios.get(`http://localhost:8000/api/deletePolygon/${id}/`)
+  const response=await axios.get(`http://localhost:8000/api/map/deletePolygon/${id}/`)
   navigate('/')
   alert(response.data.message)
   }
   useEffect(() => {
     async function getData() {
       try {
-        const response = await axios.get(`http://localhost:8000/api/getPolygon/${id}/`);
+        const response = await axios.get(`http://localhost:8000/api/map/getPolygon/${id}/`);
         const polygon = response.data.data.polygon;
         // Convert coordinates to proper format
         const isSRIDIncluded = polygon.startsWith('SRID=4326;');

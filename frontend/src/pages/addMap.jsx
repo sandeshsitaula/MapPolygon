@@ -82,7 +82,7 @@ export function AddMap() {
       return
     }
     try {
-      const response = await axios.post('http://localhost:8000/api/addPolygon/',
+      const response = await axios.post('http://localhost:8000/api/map/addPolygon/',
         MapLayers
       );
       console.log(response)

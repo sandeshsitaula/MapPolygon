@@ -4,7 +4,7 @@ import { Button } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { MapContainer, TileLayer, Polygon } from "react-leaflet";
-
+import AxiosInstance from '../axiosInstance'
 
 function AddNew() {
     return (
@@ -77,7 +77,7 @@ export function Home() {
     useEffect(() => {
         async function GetData() {
             try {
-                const response = await axios.get('http://localhost:8000/api/getAllPolygons/')
+                const response = await AxiosInstance.get('api/map/getAllPolygons/')
                 setSavedData(response.data.data)
 
             } catch (error) {
