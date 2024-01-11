@@ -49,17 +49,10 @@ def AddPolygon(request):
             newPolygon = Polygon.objects.create(polygon=polygon_geometry)
 
             customersInPolygon=Customer.objects.filter(point__within=newPolygon.polygon).order_by('-id')
-            print(customersInPolygon)
-
             customerPolygon=CustomerPolygon.objects.create()
-
-
             customerPolygon.customer.add(*customersInPolygon)
             customerPolygon.polygon=newPolygon
             customerPolygon.save()
-
-
-            print(customersInPolygon)
 
         return Response({'msg': 'Successfully added', 'data': CustomerPolygonSerializer(customerPolygon).data})
 
@@ -88,8 +81,11 @@ def GetAllPolygons(request):
 def GetPolygon(request,polygonId):
     try:
         polygon=Polygon.objects.get(id=polygonId)
-        serializer=PolygonSerializer(polygon)
+        customerPolygon=CustomerPolygon.objects.get(polygon=polygon)
+        print(customerPolygon)
+        serializer=CustomerPolygonSerializer(customerPolygon)
         data={'data':serializer.data}
+        print(data)
         return Response(data,status=200)
     except Exception as e:
         error=str(e)

@@ -8,5 +8,5 @@ class Polygon(models.Model):
     polygon=gis_models.PolygonField()
 
 class CustomerPolygon(models.Model):
-    polygon=models.ForeignKey(Polygon,on_delete=models.CASCADE),
+    polygon=models.ForeignKey(Polygon,on_delete=models.CASCADE,blank=True,null=True)
     customer=models.ManyToManyField(Customer)
