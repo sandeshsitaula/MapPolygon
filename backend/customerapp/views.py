@@ -38,11 +38,10 @@ def AddCustomer(request):
         city=data.get('city')
         zipCode=data.get('zipCode')
         lng, lat = geocode_location(country, state, city)
-
         if (lng is None or lat is None):
             return Response({'error':f'Unexpected errro couldnot find your location try again after correcting it'},401)
 
-        newCustomer=Customer(firstName=firstName,lastName=lastName,country=country,state=state,phoneNumber=phoneNumber,city=city,zipCode=zipCode,            point=Point(lat, lng))
+        newCustomer=Customer(firstName=firstName,lastName=lastName,country=country,state=state,phoneNumber=phoneNumber,city=city,zipCode=zipCode,            point=Point(lng, lat))
 
         newCustomer.save()
         data={'message':"customer creation successfull",'data':CustomerSerializer(newCustomer).data}

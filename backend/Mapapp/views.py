@@ -3,11 +3,14 @@ from rest_framework.response import Response
 from rest_framework import status
 import json
 from django.contrib.gis.geos import Polygon as GeosPolygon,Point,LinearRing
-from .serializers import PolygonSerializer
-from .models import Polygon
+from .serializers import PolygonSerializer,CustomerPolygonSerializer
+from .models import Polygon,CustomerPolygon
+from customerapp.models import Customer
 # Create your views here.
 
 #For adding a new polygon
+
+
 @api_view(['POST'])
 def AddPolygon(request):
     try:
@@ -43,8 +46,22 @@ def AddPolygon(request):
                 existing_polygon.delete()
 
             # If not found, create a new polygon
-            new_polygon = Polygon.objects.create(polygon=polygon_geometry)
-        return Response({'msg': 'Successfully added', 'data': PolygonSerializer(new_polygon).data})
+            newPolygon = Polygon.objects.create(polygon=polygon_geometry)
+
+            customersInPolygon=Customer.objects.filter(point__within=newPolygon.polygon).order_by('-id')
+            print(customersInPolygon)
+
+            customerPolygon=CustomerPolygon.objects.create()
+
+
+            customerPolygon.customer.add(*customersInPolygon)
+            customerPolygon.polygon=newPolygon
+            customerPolygon.save()
+
+
+            print(customersInPolygon)
+
+        return Response({'msg': 'Successfully added', 'data': CustomerPolygonSerializer(customerPolygon).data})
 
     except Exception as e:
         print(f"Error: {e}")
