@@ -2,18 +2,7 @@ import axios from 'axios'
 import {Form,Button,Col} from 'react-bootstrap'
 import {useState,useEffect} from 'react'
 import AxiosInstance from '../axiosInstance'
-/*
- * lass Customer(models.Model):
-    # use geocoding API to convert street address to lat/long to store in database
-    point = gis_models.PointField()
-    phone_number = models.CharField(max_length=20)
-    address = models.CharField(max_length=100)
-    city = models.CharField(max_length=50)
-    state = models.CharField(max_length=2)
-    zip_code = models.CharField(max_length=5)
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
-    polygon = models.ForeignKey(Polygon, on_delete=models.CASCADE)*/
+
 
 export function AddCustomer(){
    const [customer,SetCustomer]=useState({
