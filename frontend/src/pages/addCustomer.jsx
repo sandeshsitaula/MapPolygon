@@ -13,7 +13,9 @@ export function AddCustomer(){
        state:'',
        phoneNumber:'',
        zipCode:'',
-})
+   })
+
+const [loading,setLoading]=useState(false)
 
    //get all the input changes
    function handleChange(e){
@@ -24,7 +26,11 @@ export function AddCustomer(){
        }))
 }
     //handle submit send customer data
-    async function handleSubmit(){
+async function handleSubmit(){
+    if  (loading){
+        return
+    }
+    setLoading(true)
        const checker=Object.values(customer).some((val)=>val=='')
       if (checker){
           alert("insert all the values properly")
@@ -34,7 +40,9 @@ export function AddCustomer(){
     const response=await AxiosInstance.post('api/customer/addCustomer/',customer)
     alert(response.data.message)
 
-       console.log(response)}
+        console.log(response)
+    setLoading(false)
+    }
        catch(error){
            console.log(error)
            alert(error.response.error)
@@ -59,7 +67,7 @@ useEffect(()=>{
             <Form.Control value={customer.zipCode} style={{marginBottom:'15px'}}  onChange={handleChange}type="text" name="zipCode" placeholder="Zip Code" />
             <Form.Control value={customer.phoneNumber} style={{marginBottom:'25px'}}  onChange={handleChange}type="text" name="phoneNumber" placeholder="Phone Number (eg:+977-90000000)" />
             <div style={{textAlign:'center',marginBottom:'30px'}}>
-            <Button  style={{width:'75%'}}variant="outline-success" onClick={handleSubmit}>Submit Customer </Button>
+                <Button  style={{width:'75%'}}variant="outline-success" onClick={handleSubmit}>{loading?"Loading":"Submit Customer"}</Button>
             <Button  style={{width:'75%',marginTop:'25px'}}variant="outline-danger">Go Back(Home)</Button>
             </div>
             </Form>
