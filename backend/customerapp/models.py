@@ -21,5 +21,5 @@ class Customer(models.Model):
     city=models.CharField(max_length=50)
     state=models.CharField(max_length=50)
     zipCode=models.CharField(max_length=50)
-    point=gis_models.PointField()
+    point=gis_models.PointField(null=True)
     createdAt=models.DateTimeField(auto_now_add=True)
