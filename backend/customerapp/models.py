@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.gis.db import models as gis_models
 # Create your models here.
 '''
+10a9e27df30d48b9bf5ca88ad1f4ad44
   Class Customer(models.Model):
     # use geocoding API to convert street address to lat/long to store in database
     point = gis_models.PointField()
