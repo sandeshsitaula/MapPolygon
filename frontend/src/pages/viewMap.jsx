@@ -78,10 +78,11 @@ export function ViewMap() {
       <div style={{ backgroundColor: '#242424', paddingTop: '50px', textAlign: 'center' }}>
         <Button variant="outline-primary" onClick={handleDelete}>Delete Data(Polygon)</Button>
         <Button style={{marginLeft:'20px'}}variant="outline-secondary" onClick={()=>{navigate('/')}}>Go Home</Button>
+        <Button style={{marginLeft:'20px'}}variant="outline-secondary" onClick={()=>{navigate('/addCustomer')}}>Add Customer</Button>
       </div>
 
-
- <h5 style={{color:'white',paddingBottom:'0px',margin:'0',backgroundColor:'#242424'}}>All Users Within This Area: </h5>
+      {customers.length>0&&
+ <h5 style={{color:'white',paddingBottom:'0px',margin:'0',backgroundColor:'#242424'}}>All Users Within This Area: </h5>}
       <div style={{display:'flex',paddingTop:'20px',backgroundColor:'#242424',marginBottom:'20px',flexWrap:'wrap'}}>
 
      {customers.map((customer)=>(

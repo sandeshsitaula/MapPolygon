@@ -83,6 +83,11 @@ def GetPolygon(request,polygonId):
         polygon=Polygon.objects.get(id=polygonId)
         customerPolygon=CustomerPolygon.objects.get(polygon=polygon)
         print(customerPolygon)
+        customersInPolygon=Customer.objects.filter(point__within=polygon.polygon).order_by('-id')
+        for customer in customersInPolygon:
+            if customer not in customerPolygon.customer.all():
+                customerPolygon.customer.add(customer)
+
         serializer=CustomerPolygonSerializer(customerPolygon)
         data={'data':serializer.data}
         return Response(data,status=200)
