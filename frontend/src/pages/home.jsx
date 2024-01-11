@@ -12,6 +12,9 @@ function AddNew() {
             <Link to="/addMap">
                 <Button style={{ color: 'white' }} size="lg" variant="outline-primary" >Add New Data</Button>
             </Link>
+             <Link to="/addCustomer">
+                <Button style={{ color: 'white',marginLeft:'25px' }} size="lg" variant="outline-secondary" >Add New Customer</Button>
+            </Link>
         </div>
     )
 }
@@ -47,7 +50,7 @@ function ShowSaved({ savedData }) {
 
 
                         return (
-                            <Link key={data.id} to={`/view/${data.id}`} style={{ margin: '20px', width: '350px', height: '300px' }}>
+                            <Link key={data.id} to={`/viewMap/${data.id}`} style={{ margin: '20px', width: '350px', height: '300px' }}>
                                 <div id={data.id} style={{ padding: '10px', backgroundColor: 'gray', color: 'white' }}>
                                     Polygon Id:{data.id}
 
