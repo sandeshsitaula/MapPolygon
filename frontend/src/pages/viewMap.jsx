@@ -8,6 +8,7 @@ import {Button} from 'react-bootstrap'
 export function ViewMap() {
   const navigate=useNavigate()
   const { id } = useParams();
+  const [customers,setCustomers]=useState([])
   const [coordinates, setCoordinates] = useState([]);
 
   const [center, setCenter] = useState({ lat: 51.505, lng: -0.09 });
@@ -20,7 +21,10 @@ export function ViewMap() {
     async function getData() {
       try {
         const response = await axios.get(`http://localhost:8000/api/map/getPolygon/${id}/`);
-        const polygon = response.data.data.polygon;
+        const polygon = response.data.data.polygon.polygon;
+        setCustomers(response.data.data.customer)
+
+
         // Convert coordinates to proper format
         const isSRIDIncluded = polygon.startsWith('SRID=4326;');
         // Extract the coordinates string (remove SRID information if present)
@@ -53,10 +57,10 @@ export function ViewMap() {
   }, [center]);
 
 
-
-
   const ZOOM_LEVEL = 7;
   const mapRef = useRef();
+
+
   return (
     <>
     {coordinates?
@@ -75,6 +79,23 @@ export function ViewMap() {
         <Button variant="outline-primary" onClick={handleDelete}>Delete Data(Polygon)</Button>
         <Button style={{marginLeft:'20px'}}variant="outline-secondary" onClick={()=>{navigate('/')}}>Go Home</Button>
       </div>
+
+
+ <h5 style={{color:'white',paddingBottom:'0px',margin:'0',backgroundColor:'#242424'}}>All Users Within This Area: </h5>
+      <div style={{display:'flex',paddingTop:'20px',backgroundColor:'#242424',marginBottom:'20px',flexWrap:'wrap'}}>
+
+     {customers.map((customer)=>(
+       <div key={customer.id} style={{backgroundColor:'white',marginLeft:'20px',borderRadius:'10px',padding:'20px',marginTop:'20px',width:'300px'}}>
+       <h5>FullName:{customer.firstName} {customer.lastName}</h5>
+       <h5>PhoneNumber:{customer.phoneNumber}</h5>
+       <h5>Country:{customer.country}</h5>
+       <h5>State:{customer.state}</h5>
+       <h5>City:{customer.city}</h5>
+       <h5>ZipCode:{customer.zipCode}</h5>
+       </div>
+    ))}
+      </div>
+
       </>
 
 

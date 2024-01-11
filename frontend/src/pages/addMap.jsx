@@ -21,6 +21,8 @@ L.Icon.Default.mergeOptions({
 });
 
 export function AddMap() {
+    const [customers,setCustomers]=useState([])
+
   const [center, setCenter] = useState({ lat: 51.505, lng: -0.09 });
   const [MapLayers, setMapLayers] = useState([])
   const ZOOM_LEVEL = 12;
@@ -86,6 +88,8 @@ export function AddMap() {
         MapLayers
       );
       console.log(response)
+        setCustomers(response.data.data.customer)
+
       alert(response.data.msg)
     } catch (error) {
       console.log(error)
@@ -121,6 +125,23 @@ export function AddMap() {
       <div style={{ backgroundColor: '#242424', paddingTop: '50px', textAlign: 'center' }}>
         <Button variant="outline-primary" onClick={handleClick}>Save Data(Polygon)</Button>
         <Button style={{marginLeft:'20px'}}variant="outline-secondary" onClick={()=>{navigate('/')}}>Go Home</Button>
+      </div>
+
+
+      {customers.length>0&&<h5 style={{color:'white',paddingBottom:'0px',margin:'0',backgroundColor:'#242424'}}>All Users Within This Area: </h5>}
+      <div style={{display:'flex',paddingTop:'20px',backgroundColor:'#242424',marginBottom:'20px',flexWrap:'wrap'}}>
+
+     {customers.map((customer)=>(
+
+       <div key={customer.id} style={{backgroundColor:'white',marginLeft:'20px',borderRadius:'10px',padding:'20px',marginTop:'20px',width:'300px'}}>
+       <h5>FullName:{customer.firstName} {customer.lastName}</h5>
+       <h5>PhoneNumber:{customer.phoneNumber}</h5>
+       <h5>Country:{customer.country}</h5>
+       <h5>State:{customer.state}</h5>
+       <h5>City:{customer.city}</h5>
+       <h5>ZipCode:{customer.zipCode}</h5>
+       </div>
+    ))}
       </div>
     </>
   );

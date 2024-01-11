@@ -85,7 +85,6 @@ def GetPolygon(request,polygonId):
         print(customerPolygon)
         serializer=CustomerPolygonSerializer(customerPolygon)
         data={'data':serializer.data}
-        print(data)
         return Response(data,status=200)
     except Exception as e:
         error=str(e)
