@@ -101,14 +101,26 @@ def GetAllPolygons(request):
 @api_view(['GET'])
 def GetPolygon(request,polygonId):
     try:
-        polygon=Polygon.objects.get(id=polygonId)
-        customerPolygon=CustomerPolygon.objects.get(polygon=polygon)
-        customersInPolygon=Customer.objects.filter(point__within=polygon.polygon).order_by('-id')
-        for customer in customersInPolygon:
-            if customer not in customerPolygon.customer.all():
-                customerPolygon.customer.add(customer)
+        polygon=ServiceArea.objects.get(id=polygonId)
 
-        serializer=CustomerPolygonSerializer(customerPolygon)
+        serviceAddress=ServiceAddress.objects.filter(location__within=polygon.polygon).order_by('-id').distinct()
+
+        for service in serviceAddress:
+
+            if service.service_area is None:
+                    # If service_area is null, update the existing service_area
+                    service.service_area = polygon
+                    service.save()
+
+        print(serviceAddress)
+
+        if len(serviceAddress)==0:
+            serializer=ServiceAreaSerializer(polygon)
+        else:
+
+            serializer=ServiceAddressSerializer(serviceAddress,many=True)
+
+
         data={'data':serializer.data}
         return Response(data,status=200)
     except Exception as e:
@@ -120,7 +132,7 @@ def GetPolygon(request,polygonId):
 @api_view(['GET'])
 def DeletePolygon(request,polygonId):
     try:
-        polygon=Polygon.objects.get(id=polygonId)
+        polygon=ServiceArea.objects.get(id=polygonId)
         polygon.delete()
         return Response({'message':f"Polygon Deleted sucessfully"},status=200)
     except Exception as e:

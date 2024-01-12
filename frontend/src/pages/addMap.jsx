@@ -7,8 +7,8 @@ import { useRef } from "react";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
 import axios from 'axios'
-import { Button,Form } from 'react-bootstrap'
-import {useNavigate} from 'react-router-dom'
+import { Button, Form } from 'react-bootstrap'
+import { useNavigate } from 'react-router-dom'
 
 delete L.Icon.Default.prototype._getIconUrl;
 
@@ -22,11 +22,11 @@ L.Icon.Default.mergeOptions({
 });
 
 export function AddMap() {
-   const [center, setCenter] = useState({ lat: 51.505, lng: -0.09 });
+  const [center, setCenter] = useState({ lat: 51.505, lng: -0.09 });
   const [MapLayers, setMapLayers] = useState([])
   const mapRef = useRef();
-  const navigate=useNavigate()
-const [customers,setCustomers]=useState([])
+  const navigate = useNavigate()
+  const [customers, setCustomers] = useState([])
 
   // Function to handle 'beforeunload' event
   const handleBeforeUnload = () => {
@@ -49,9 +49,9 @@ const [customers,setCustomers]=useState([])
 
 
 
-const ZOOM_LEVEL=localStorage.getItem('AddzoomLevel')||12
+  const ZOOM_LEVEL = localStorage.getItem('AddzoomLevel') || 12
 
-//for location searching
+  //for location searching
   const [searchValue, setSearchValue] = useState('');
   const handleSearchChange = (e) => {
     setSearchValue(e.target.value);
@@ -67,21 +67,21 @@ const ZOOM_LEVEL=localStorage.getItem('AddzoomLevel')||12
       console.log(data)
       if (data.length > 0) {
         const { lat, lon } = data[0];
-        setCenter({lat:parseFloat(lat),lng: parseFloat(lon)});
+        setCenter({ lat: parseFloat(lat), lng: parseFloat(lon) });
       }
     } catch (error) {
       console.error('Error fetching location:', error);
     }
 
   };
-    useEffect(() => {
+  useEffect(() => {
     // Manually set the center of the map when the center state changes using useref
     if (mapRef.current && center) {
       mapRef.current.setView([center.lat, center.lng], ZOOM_LEVEL);
     }
   }, [center]);
 
-//for creating removing and editing handlers
+  //for creating removing and editing handlers
   const _onCreate = (e) => {
     const { layerType, layer } = e;
     if (layerType === "polygon") {
@@ -141,9 +141,9 @@ const ZOOM_LEVEL=localStorage.getItem('AddzoomLevel')||12
         MapLayers
       );
       console.log(response)
-        if (response.data.data){
+      if (response.data.data) {
         setCustomers(response.data.data)
-        }
+      }
       alert(response.data.msg)
     } catch (error) {
       console.log(error)
@@ -179,40 +179,42 @@ const ZOOM_LEVEL=localStorage.getItem('AddzoomLevel')||12
       </MapContainer>
 
 
-      <div style={{ display:'flex',justifyContent:'space-around' ,backgroundColor: '#242424', paddingTop: '50px', textAlign: 'center' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-around', backgroundColor: '#242424', paddingTop: '50px', textAlign: 'center' }}>
 
+            <div style={{display:'flex'}}>
 
-
-      <Form>
-      <Form.Control value={searchValue} onChange={handleSearchChange} placeholder="Search Location"/>
-      </Form>
-       <button type="button" onClick={handleSelect}>
-        Search
-      </button>
+        <Form>
+          <Form.Control value={searchValue} onChange={handleSearchChange} placeholder="Search Location" />
+        </Form>
+        <button type="button" onClick={handleSelect}>
+          Search Location
+        </button>
+        </div>
         <Button variant="outline-primary" onClick={handleClick}>Save Data(Polygon)</Button>
-        <Button style={{marginLeft:'20px'}}variant="outline-secondary" onClick={()=>{navigate('/')}}>Go Home</Button>
+        <Button style={{ marginLeft: '20px' }} variant="outline-secondary" onClick={() => { navigate('/') }}>Go Home</Button>
       </div>
 
 
-      {customers.length>0&&<h5 style={{color:'white',paddingBottom:'0px',margin:'0',backgroundColor:'#242424'}}>All Users Within This Area: </h5>}
-      <div style={{display:'flex',paddingTop:'20px',backgroundColor:'#242424',marginBottom:'20px',flexWrap:'wrap'}}>
+      {customers.length > 0 && <h5 style={{ color: 'white', paddingBottom: '0px', margin: '0', backgroundColor: '#242424' }}>All Users Within This Area: </h5>}
+      <div style={{ display: 'flex', paddingTop: '20px', backgroundColor: '#242424', marginBottom: '20px', flexWrap: 'wrap' }}>
 
-     {customers.map((cust)=>{
-        const customer=cust.customer
-        console.log(customer)
-       return(
+        {customers.map((cust) => {
+          const customer = cust.customer
+          console.log(customer)
+          return (
 
-       <div key={customer.id} style={{backgroundColor:'white',marginLeft:'20px',borderRadius:'10px',padding:'20px',marginTop:'20px',width:'300px'}}>
-       <h5>FullName:{customer.first_name} {customer.last_name}</h5>
-       <h5>Email:{customer.email}</h5>
-       <h5>PhoneNumber:{customer.phone_number}</h5>
-       <h5>Country:{cust.country}</h5>
-       <h5>State:{cust.state}</h5>
-       <h5>City:{cust.city}</h5>
-       <h5>Address:{cust.address}</h5>
-       <h5>ZipCode:{cust.zip_code}</h5>
-       </div>
-       )} )}
+            <div key={customer.id} style={{ backgroundColor: 'white', marginLeft: '20px', borderRadius: '10px', padding: '20px', marginTop: '20px', width: '300px' }}>
+              <h5>FullName:{customer.first_name} {customer.last_name}</h5>
+              <h5>Email:{customer.email}</h5>
+              <h5>PhoneNumber:{customer.phone_number}</h5>
+              <h5>Country:{cust.country}</h5>
+              <h5>State:{cust.state}</h5>
+              <h5>City:{cust.city}</h5>
+              <h5>Address:{cust.address}</h5>
+              <h5>ZipCode:{cust.zip_code}</h5>
+            </div>
+          )
+        })}
       </div>
     </>
   );
