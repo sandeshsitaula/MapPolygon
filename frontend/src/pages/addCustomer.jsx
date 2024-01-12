@@ -2,9 +2,10 @@ import axios from 'axios'
 import {Form,Button,Col} from 'react-bootstrap'
 import {useState,useEffect} from 'react'
 import AxiosInstance from '../axiosInstance'
-
-
+import {useNavigate} from 'react-router-dom'
 export function AddCustomer(){
+    const navigate=useNavigate()
+
   const intialCustomerState={
      firstName:'',
        lastName:'',
@@ -78,7 +79,7 @@ useEffect(()=>{
             <Form.Control value={customer.phoneNumber} style={{marginBottom:'25px'}}  onChange={handleChange}type="text" name="phoneNumber" placeholder="Phone Number (eg:+977-90000000)" />
             <div style={{textAlign:'center',marginBottom:'30px'}}>
                 <Button  style={{width:'75%'}}variant="outline-success" onClick={handleSubmit}>{loading?"Loading":"Submit Customer"}</Button>
-            <Button  style={{width:'75%',marginTop:'25px'}}variant="outline-danger">Go Back(Home)</Button>
+            <Button onClick={()=>navigate('/')}  style={{width:'75%',marginTop:'25px'}}variant="outline-danger">Go Back(Home)</Button>
             </div>
             </Form>
             </Col>

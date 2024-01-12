@@ -47,6 +47,7 @@ function ShowSaved({ savedData }) {
                 {savedData ?
                     savedData.map((data) => {
                         const polygonCoordinates = parsePolygon(data.polygon);
+                        console.log(data)
 
 
                         return (

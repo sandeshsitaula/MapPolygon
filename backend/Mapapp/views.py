@@ -103,7 +103,7 @@ def GetPolygon(request,polygonId):
     try:
         polygon=ServiceArea.objects.get(id=polygonId)
 
-        serviceAddress=ServiceAddress.objects.filter(location__within=polygon.polygon).order_by('-id').distinct()
+        serviceAddress=ServiceAddress.objects.filter(location__within=polygon.polygon,service_area=polygon).order_by('-id')
 
         for service in serviceAddress:
 
@@ -113,6 +113,8 @@ def GetPolygon(request,polygonId):
                     service.save()
 
         print(serviceAddress)
+
+
 
         if len(serviceAddress)==0:
             serializer=ServiceAreaSerializer(polygon)
