@@ -88,8 +88,9 @@ export function AddMap() {
         MapLayers
       );
       console.log(response)
+        if (response.data.data){
         setCustomers(response.data.data.customer)
-
+        }
       alert(response.data.msg)
     } catch (error) {
       console.log(error)

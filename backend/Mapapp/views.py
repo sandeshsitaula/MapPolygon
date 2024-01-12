@@ -16,6 +16,7 @@ from customerapp.serializers import ServiceAddressSerializer
 def AddPolygon(request):
     try:
         data = json.loads(request.body)
+        listData=[]
 
         for item in data:
             latlngs = item['latlngs']
@@ -37,7 +38,7 @@ def AddPolygon(request):
             polygon_wkt = polygon_geometry.wkt
 
             # Check if there is an existing polygon with exactly the same coordinates
-            existing_polygon = Polygon.objects.filter(polygon__exact=polygon_wkt).first()
+            existing_polygon = ServiceArea.objects.filter(polygon__exact=polygon_wkt).first()
 
             if existing_polygon:
                 print(f"Polygon with coordinates {latlngs} already exists.")
@@ -47,15 +48,35 @@ def AddPolygon(request):
                 existing_polygon.delete()
 
             # If not found, create a new polygon
-            newPolygon = Polygon.objects.create(polygon=polygon_geometry)
+            newServiceArea = ServiceArea.objects.create(polygon=polygon_geometry)
 
-            customersInPolygon=Customer.objects.filter(point__within=newPolygon.polygon).order_by('-id')
-            customerPolygon=CustomerPolygon.objects.create()
-            customerPolygon.customer.add(*customersInPolygon)
-            customerPolygon.polygon=newPolygon
-            customerPolygon.save()
+            serviceAddressInPolygon=ServiceAddress.objects.filter(location__within=newServiceArea.polygon).order_by('-id')
+            print(serviceAddressInPolygon)
 
-        return Response({'msg': 'Successfully added', 'data': CustomerPolygonSerializer(customerPolygon).data})
+            if serviceAddressInPolygon is None:
+                continue
+            for service in serviceAddressInPolygon:
+
+                if service.service_area is None:
+                    # If service_area is null, update the existing service_area
+                    service.service_area = newServiceArea
+                    service.save()
+                    listData.append(ServiceAddressSerializer(service).data)
+                else:
+                    service_temp=ServiceAddress.objects.filter(customer=service.customer,service_area=newServiceArea)[:1]
+                    print('temps',service_temp)
+                    if len(service_temp)>0:
+                        continue
+                    service_data = {field.name: getattr(service, field.name) for field in ServiceAddress._meta.fields if field.name not in ['_state', 'id']}
+                    service_data['service_area'] = newServiceArea  # Set the new service_area
+                    newServiceAddress,created = ServiceAddress.objects.get_or_create(**service_data)
+                    listData.append(ServiceAddressSerializer(newServiceAddress).data)
+
+        # print(listData)
+        if len(listData)==0:
+            return Response({'msg':'sucessfully added'})
+
+        return Response({'msg': 'Successfully added', 'data': listData})
 
     except Exception as e:
         print(f"Error: {e}")
