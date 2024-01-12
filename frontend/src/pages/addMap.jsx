@@ -7,8 +7,9 @@ import { useRef } from "react";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
 import axios from 'axios'
-import { Button } from 'react-bootstrap'
+import { Button,Form } from 'react-bootstrap'
 import {useNavigate} from 'react-router-dom'
+
 delete L.Icon.Default.prototype._getIconUrl;
 
 L.Icon.Default.mergeOptions({
@@ -21,13 +22,67 @@ L.Icon.Default.mergeOptions({
 });
 
 export function AddMap() {
-    const [customers,setCustomers]=useState([])
-
-  const [center, setCenter] = useState({ lat: 51.505, lng: -0.09 });
+   const [center, setCenter] = useState({ lat: 51.505, lng: -0.09 });
   const [MapLayers, setMapLayers] = useState([])
-  const ZOOM_LEVEL = 12;
   const mapRef = useRef();
   const navigate=useNavigate()
+const [customers,setCustomers]=useState([])
+
+  // Function to handle 'beforeunload' event
+  const handleBeforeUnload = () => {
+    const map = mapRef.current;
+    if (map) {
+      const zoomLevel = map.getZoom();
+      localStorage.setItem("AddzoomLevel", zoomLevel);
+    }
+  };
+
+  // Add 'beforeunload' event listener when the component mounts
+  useEffect(() => {
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    // Remove the event listener when the component unmounts
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []); // Empty dependency array to run this effect once when the component mounts
+
+
+
+const ZOOM_LEVEL=localStorage.getItem('AddzoomLevel')||12
+console.log(ZOOM_LEVEL)
+
+//for location searching
+  const [searchValue, setSearchValue] = useState('');
+  const handleSearchChange = (e) => {
+    setSearchValue(e.target.value);
+  };
+
+  const handleSelect = async () => {
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${searchValue}`
+      );
+
+      const data = await response.json();
+      console.log(data)
+      if (data.length > 0) {
+        const { lat, lon } = data[0];
+        setCenter({lat:parseFloat(lat),lng: parseFloat(lon)});
+      }
+    } catch (error) {
+      console.error('Error fetching location:', error);
+    }
+
+  };
+    useEffect(() => {
+    // Manually set the center of the map when the center state changes using useref
+    if (mapRef.current && center) {
+      mapRef.current.setView([center.lat, center.lng], ZOOM_LEVEL);
+    }
+  }, [center]);
+
+//for creating removing and editing handlers
   const _onCreate = (e) => {
     const { layerType, layer } = e;
     if (layerType === "polygon") {
@@ -75,6 +130,8 @@ export function AddMap() {
     });
   };
 
+  //on adding polygon
+
   const handleClick = async () => {
     if (MapLayers.length == 0) {
       alert("create atleast one polygon")
@@ -94,6 +151,7 @@ export function AddMap() {
     }
   }
 
+  //
   return (
     <>
       <MapContainer center={center} zoom={ZOOM_LEVEL} style={{ height: '500px', width: '100%' }} ref={mapRef}>
@@ -115,12 +173,23 @@ export function AddMap() {
 
           />
         </FeatureGroup>
+
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' />
       </MapContainer>
 
-      <div style={{ backgroundColor: '#242424', paddingTop: '50px', textAlign: 'center' }}>
+
+      <div style={{ display:'flex',justifyContent:'space-around' ,backgroundColor: '#242424', paddingTop: '50px', textAlign: 'center' }}>
+
+
+
+      <Form>
+      <Form.Control value={searchValue} onChange={handleSearchChange} placeholder="Search Location"/>
+      </Form>
+       <button type="button" onClick={handleSelect}>
+        Search
+      </button>
         <Button variant="outline-primary" onClick={handleClick}>Save Data(Polygon)</Button>
         <Button style={{marginLeft:'20px'}}variant="outline-secondary" onClick={()=>{navigate('/')}}>Go Home</Button>
       </div>
