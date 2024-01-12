@@ -2,16 +2,40 @@ import { useState, useEffect, useRef,useCallback } from 'react';
 import axios from 'axios';
 import { useParams,useNavigate } from 'react-router-dom';
 import L from 'leaflet';
-import { MapContainer, TileLayer, Polygon } from 'react-leaflet';
+import { MapContainer, TileLayer, Polygon,Marker } from 'react-leaflet';
 import {Button} from 'react-bootstrap'
 
 export function ViewMap() {
   const navigate=useNavigate()
   const { id } = useParams();
-  const [customers,setCustomers]=useState([])
+  const mapRef = useRef();
   const [coordinates, setCoordinates] = useState([]);
-
   const [center, setCenter] = useState({ lat: 51.505, lng: -0.09 });
+  const [data,setData]=useState([])
+
+    // Function to handle 'beforeunload' event
+  const handleBeforeUnload = () => {
+    const map = mapRef.current;
+    if (map) {
+      const zoomLevel = map.getZoom();
+      localStorage.setItem("AddzoomLevel", zoomLevel);
+    }
+  };
+
+  // Add 'beforeunload' event listener when the component mounts
+  useEffect(() => {
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    // Remove the event listener when the component unmounts
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []); // Empty dependency array to run this effect once when the component mounts
+
+const ZOOM_LEVEL=localStorage.getItem('AddzoomLevel')||12
+
+
+//delete
   const handleDelete=async()=>{
   const response=await axios.get(`http://localhost:8000/api/map/deletePolygon/${id}/`)
   navigate('/')
@@ -21,8 +45,16 @@ export function ViewMap() {
     async function getData() {
       try {
         const response = await axios.get(`http://localhost:8000/api/map/getPolygon/${id}/`);
-        const polygon = response.data.data.polygon.polygon;
-        setCustomers(response.data.data.customer)
+        console.log(response)
+        let polygon
+        if (response.data.data.polygon){
+         polygon = response.data.data.polygon
+        }else{
+           polygon=response.data.data[0].service_area.polygon
+           setData(response.data.data)
+
+        }
+
 
 
         // Convert coordinates to proper format
@@ -48,7 +80,7 @@ export function ViewMap() {
     getData();
   }, [id]);
 
-
+//for updating map
     useEffect(() => {
     // Manually set the center of the map when the center state changes using useref
     if (mapRef.current && center) {
@@ -57,8 +89,6 @@ export function ViewMap() {
   }, [center]);
 
 
-  const ZOOM_LEVEL = 7;
-  const mapRef = useRef();
 
 
   return (
@@ -71,6 +101,22 @@ export function ViewMap() {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' />
 
           <Polygon positions={coordinates} pathOptions={{ color: 'blue' }} />
+      {data.map((temp) => {
+        const location =temp.location
+         const coordinatesString =  location.substring(17, location.length - 2) ;
+        // Split the coordinates into individual points
+        const points = coordinatesString
+          .split(',')
+          .map(coord => coord.trim().split(/\s+/).map(c => parseFloat(c)));
+        // Swap latitude and longitude for Leaflet
+        const userCoordinates = points.map(point => [point[1], point[0]]);
+
+        console.log(userCoordinates[0])
+    return(
+    <Marker key={temp.id} position={userCoordinates[0]}>
+    {/* Customize the Marker as needed */}
+    </Marker>
+      )})}
 
 
     </MapContainer>
@@ -81,20 +127,24 @@ export function ViewMap() {
         <Button style={{marginLeft:'20px'}}variant="outline-secondary" onClick={()=>{navigate('/addCustomer')}}>Add Customer</Button>
       </div>
 
-      {customers.length>0&&
+      {data.length>0&&
  <h5 style={{color:'white',paddingBottom:'0px',margin:'0',backgroundColor:'#242424'}}>All Users Within This Area: </h5>}
       <div style={{display:'flex',paddingTop:'20px',backgroundColor:'#242424',marginBottom:'20px',flexWrap:'wrap'}}>
 
-     {customers.map((customer)=>(
+     {data.map((customers)=>{
+       const customer=customers.customer
+       return(
        <div key={customer.id} style={{backgroundColor:'white',marginLeft:'20px',borderRadius:'10px',padding:'20px',marginTop:'20px',width:'300px'}}>
-       <h5>FullName:{customer.firstName} {customer.lastName}</h5>
-       <h5>PhoneNumber:{customer.phoneNumber}</h5>
-       <h5>Country:{customer.country}</h5>
-       <h5>State:{customer.state}</h5>
-       <h5>City:{customer.city}</h5>
-       <h5>ZipCode:{customer.zipCode}</h5>
+        <h5>FullName:{customer.first_name} {customer.last_name}</h5>
+       <h5>Email:{customer.email}</h5>
+       <h5>PhoneNumber:{customer.phone_number}</h5>
+       <h5>Country:{customers.country}</h5>
+       <h5>State:{customers.state}</h5>
+       <h5>City:{customers.city}</h5>
+       <h5>Address:{customers.address}</h5>
+       <h5>ZipCode:{customers.zip_code}</h5>
        </div>
-    ))}
+       )})}
       </div>
 
       </>

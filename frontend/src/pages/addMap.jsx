@@ -50,7 +50,6 @@ const [customers,setCustomers]=useState([])
 
 
 const ZOOM_LEVEL=localStorage.getItem('AddzoomLevel')||12
-console.log(ZOOM_LEVEL)
 
 //for location searching
   const [searchValue, setSearchValue] = useState('');
