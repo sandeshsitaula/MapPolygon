@@ -29,7 +29,6 @@ export function AddMap() {
   const mapRef = useRef();
   const navigate=useNavigate()
   const _onCreate = (e) => {
-    console.log(e)
     const { layerType, layer } = e;
     if (layerType === "polygon") {
       const { _leaflet_id } = layer;
@@ -48,8 +47,6 @@ export function AddMap() {
       const latlngs = layer._latlngs[0].map((latlng) => {
         return { lat: latlng.lat, lng: latlng.lng };
       });
-      console.log(layers._layers)
-      console.log(latlngs)
       return { leaflet_id: layers._layers._leaflet_id, latlngs: latlngs };
     });
 
@@ -89,7 +86,7 @@ export function AddMap() {
       );
       console.log(response)
         if (response.data.data){
-        setCustomers(response.data.data.customer)
+        setCustomers(response.data.data)
         }
       alert(response.data.msg)
     } catch (error) {
@@ -132,17 +129,22 @@ export function AddMap() {
       {customers.length>0&&<h5 style={{color:'white',paddingBottom:'0px',margin:'0',backgroundColor:'#242424'}}>All Users Within This Area: </h5>}
       <div style={{display:'flex',paddingTop:'20px',backgroundColor:'#242424',marginBottom:'20px',flexWrap:'wrap'}}>
 
-     {customers.map((customer)=>(
+     {customers.map((cust)=>{
+        const customer=cust.customer
+        console.log(customer)
+       return(
 
        <div key={customer.id} style={{backgroundColor:'white',marginLeft:'20px',borderRadius:'10px',padding:'20px',marginTop:'20px',width:'300px'}}>
-       <h5>FullName:{customer.firstName} {customer.lastName}</h5>
-       <h5>PhoneNumber:{customer.phoneNumber}</h5>
-       <h5>Country:{customer.country}</h5>
-       <h5>State:{customer.state}</h5>
-       <h5>City:{customer.city}</h5>
-       <h5>ZipCode:{customer.zipCode}</h5>
+       <h5>FullName:{customer.first_name} {customer.last_name}</h5>
+       <h5>Email:{customer.email}</h5>
+       <h5>PhoneNumber:{customer.phone_number}</h5>
+       <h5>Country:{cust.country}</h5>
+       <h5>State:{cust.state}</h5>
+       <h5>City:{cust.city}</h5>
+       <h5>Address:{cust.address}</h5>
+       <h5>ZipCode:{cust.zip_code}</h5>
        </div>
-    ))}
+       )} )}
       </div>
     </>
   );
