@@ -36,7 +36,7 @@ function ShowSaved({ savedData }) {
         const polygonCoordinates = points.map(point => [point[1], point[0]]);
         return polygonCoordinates;
     };
-    const ZOOM_LEVEL = 8;
+    const ZOOM_LEVEL = 10;
     const mapRef = useRef();
 
     return (
@@ -55,7 +55,7 @@ function ShowSaved({ savedData }) {
                                     Polygon Id:{data.id}
 
 
-                                    <MapContainer center={polygonCoordinates[0]} zoomControl={false} zoom={ZOOM_LEVEL} style={{ height: '250px', width: '100%' }} ref={mapRef}>
+                                    <MapContainer dragging={false} scrollWheelZoom={false} center={polygonCoordinates[0]} zoomControl={false} zoom={ZOOM_LEVEL} style={{ height: '250px', width: '100%' }} ref={mapRef}>
 
                                         <TileLayer
                                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

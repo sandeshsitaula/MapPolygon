@@ -25,7 +25,6 @@ def AddPolygon(request):
             if len(latlngs) >= 3:
                 #required because Polygon from geos expects last coordinates to be same
                 latlngs.append(latlngs[0])
-                print(latlngs)
 
 
             # Create a list
@@ -51,7 +50,6 @@ def AddPolygon(request):
             newServiceArea = ServiceArea.objects.create(polygon=polygon_geometry)
 
             serviceAddressInPolygon=ServiceAddress.objects.filter(location__within=newServiceArea.polygon).order_by('-id')
-            print(serviceAddressInPolygon)
 
             if serviceAddressInPolygon is None:
                 continue
@@ -64,15 +62,14 @@ def AddPolygon(request):
                     listData.append(ServiceAddressSerializer(service).data)
                 else:
                     service_temp=ServiceAddress.objects.filter(customer=service.customer,service_area=newServiceArea)[:1]
-                    print('temps',service_temp)
                     if len(service_temp)>0:
                         continue
+
                     service_data = {field.name: getattr(service, field.name) for field in ServiceAddress._meta.fields if field.name not in ['_state', 'id']}
                     service_data['service_area'] = newServiceArea  # Set the new service_area
                     newServiceAddress,created = ServiceAddress.objects.get_or_create(**service_data)
                     listData.append(ServiceAddressSerializer(newServiceAddress).data)
 
-        # print(listData)
         if len(listData)==0:
             return Response({'msg':'sucessfully added'})
 
@@ -89,8 +86,10 @@ def AddPolygon(request):
 @api_view(['GET'])
 def GetAllPolygons(request):
     try:
-        polygons=Polygon.objects.all().order_by('-id')
-        serializer=PolygonSerializer(polygons,many=True)
+
+        serviceArea=ServiceArea.objects.all().order_by('-id')
+
+        serializer=ServiceAreaSerializer(serviceArea,many=True)
         data={'data':serializer.data}
         return Response(data,status=200)
     except Exception as e:
@@ -104,7 +103,6 @@ def GetPolygon(request,polygonId):
     try:
         polygon=Polygon.objects.get(id=polygonId)
         customerPolygon=CustomerPolygon.objects.get(polygon=polygon)
-        print(customerPolygon)
         customersInPolygon=Customer.objects.filter(point__within=polygon.polygon).order_by('-id')
         for customer in customersInPolygon:
             if customer not in customerPolygon.customer.all():
