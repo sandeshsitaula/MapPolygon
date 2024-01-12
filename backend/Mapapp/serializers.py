@@ -1,17 +1,9 @@
 from rest_framework import serializers
-from .models import Polygon,CustomerPolygon
+from .models import ServiceArea
 
-from customerapp.serializers import CustomerSerializer
-class PolygonSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model=Polygon
-        fields='__all__'
-
-class CustomerPolygonSerializer(serializers.ModelSerializer):
-    polygon=PolygonSerializer()
-    customer=CustomerSerializer(many=True)
+class ServiceAreaSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model=CustomerPolygon
+        model=ServiceArea
         fields='__all__'
+
