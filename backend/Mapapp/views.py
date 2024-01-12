@@ -3,9 +3,10 @@ from rest_framework.response import Response
 from rest_framework import status
 import json
 from django.contrib.gis.geos import Polygon as GeosPolygon,Point,LinearRing
-from .serializers import PolygonSerializer,CustomerPolygonSerializer
-from .models import Polygon,CustomerPolygon
-from customerapp.models import Customer
+from .serializers import ServiceAreaSerializer
+from .models import ServiceArea
+from customerapp.models import Customer,ServiceAddress
+from customerapp.serializers import ServiceAddressSerializer
 # Create your views here.
 
 #For adding a new polygon

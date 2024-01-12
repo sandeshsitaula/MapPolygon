@@ -51,7 +51,7 @@ async function handleSubmit(){
        catch(error){
            console.log(error)
            alert(error.error)
-           setCustomer(intialCustomerState)
+           // setCustomer(intialCustomerState)
            setLoading(false)
 
     }
