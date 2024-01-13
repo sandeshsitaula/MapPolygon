@@ -105,14 +105,11 @@ def GetPolygon(request,polygonId):
         polygon=ServiceArea.objects.get(id=polygonId)
 
         serviceAddress=ServiceAddress.objects.filter(service_area=polygon).order_by('-id')
-        print(serviceAddress)
-
         if len(serviceAddress)==0:
             serializer=ServiceAreaSerializer(polygon)
         else:
 
             serializer=ServiceAddressSerializer(serviceAddress,many=True)
-
 
         data={'data':serializer.data}
         return Response(data,status=200)

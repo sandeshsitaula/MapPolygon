@@ -45,7 +45,6 @@ export function ViewMap() {
     async function getData() {
       try {
         const response = await axios.get(`http://localhost:8000/api/map/getPolygon/${id}/`);
-        console.log(response)
         let polygon
         if (response.data.data.polygon) {
           polygon = response.data.data.polygon
@@ -111,7 +110,6 @@ export function ViewMap() {
               // Swap latitude and longitude for Leaflet
               const userCoordinates = points.map(point => [point[1], point[0]]);
 
-              console.log(userCoordinates[0])
               return (
                 <Marker key={temp.id} position={userCoordinates[0]}>
                   {/* Customize the Marker as needed */}

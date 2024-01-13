@@ -64,7 +64,6 @@ export function AddMap() {
       );
 
       const data = await response.json();
-      console.log(data)
       if (data.length > 0) {
         const { lat, lon } = data[0];
         setCenter({ lat: parseFloat(lat), lng: parseFloat(lon) });
@@ -140,7 +139,6 @@ export function AddMap() {
       const response = await axios.post('http://localhost:8000/api/map/addPolygon/',
         MapLayers
       );
-      console.log(response)
       if (response.data.data) {
         setCustomers(response.data.data)
       }
@@ -200,7 +198,6 @@ export function AddMap() {
 
         {customers.map((cust) => {
           const customer = cust.customer
-          console.log(customer)
           return (
 
             <div key={customer.id} style={{ backgroundColor: 'white', marginLeft: '20px', borderRadius: '10px', padding: '20px', marginTop: '20px', width: '300px' }}>

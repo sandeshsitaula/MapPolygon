@@ -36,7 +36,7 @@ function ShowSaved({ savedData }) {
         const polygonCoordinates = points.map(point => [point[1], point[0]]);
         return polygonCoordinates;
     };
-    const ZOOM_LEVEL = 10;
+    const ZOOM_LEVEL = 7;
     const mapRef = useRef();
 
     return (
