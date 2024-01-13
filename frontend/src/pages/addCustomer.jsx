@@ -45,7 +45,6 @@ export function AddCustomer() {
             const response = await AxiosInstance.post('api/customer/addCustomer/', customer)
             alert(response.data.message)
 
-            console.log(response)
             setLoading(false)
             setCustomer(intialCustomerState)
         }
@@ -57,9 +56,6 @@ export function AddCustomer() {
 
         }
     }
-    useEffect(() => {
-        console.log(customer)
-    })
     return (
         <>
             <div style={{ backgroundColor: '#2e8a99', display: 'flex', height: '100vh', paddingTop: '5rem', justifyContent: 'center' }}>

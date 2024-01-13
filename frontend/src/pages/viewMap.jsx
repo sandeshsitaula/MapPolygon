@@ -43,6 +43,7 @@ export function ViewMap() {
   }
   useEffect(() => {
     async function getData() {
+      console.log('view')
       try {
         const response = await axios.get(`http://localhost:8000/api/map/getPolygon/${id}/`);
         let polygon

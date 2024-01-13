@@ -8,7 +8,6 @@ import {AddCustomer} from './pages/addCustomer'
 import { ViewMap } from './pages/viewMap'
 import { Home } from './pages/home';
 function App() {
-
   return (
     <>
       <Router>
