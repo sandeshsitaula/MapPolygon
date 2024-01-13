@@ -6,9 +6,9 @@ import { Icon } from "leaflet";
 import { useRef } from "react";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
-import axios from 'axios'
-import { Button, Form } from 'react-bootstrap'
-import { useNavigate } from 'react-router-dom'
+import axios from "axios";
+import { Button, Form } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
 delete L.Icon.Default.prototype._getIconUrl;
 
@@ -23,10 +23,10 @@ L.Icon.Default.mergeOptions({
 
 export function AddMap() {
   const [center, setCenter] = useState({ lat: 51.505, lng: -0.09 });
-  const [MapLayers, setMapLayers] = useState([])
+  const [MapLayers, setMapLayers] = useState([]);
   const mapRef = useRef();
-  const navigate = useNavigate()
-  const [customers, setCustomers] = useState([])
+  const navigate = useNavigate();
+  const [customers, setCustomers] = useState([]);
 
   // Function to handle 'beforeunload' event
   const handleBeforeUnload = () => {
@@ -47,12 +47,10 @@ export function AddMap() {
     };
   }, []); // Empty dependency array to run this effect once when the component mounts
 
-
-
-  const ZOOM_LEVEL = localStorage.getItem('AddzoomLevel') || 12
+  const ZOOM_LEVEL = localStorage.getItem("AddzoomLevel") || 12;
 
   //for location searching
-  const [searchValue, setSearchValue] = useState('');
+  const [searchValue, setSearchValue] = useState("");
   const handleSearchChange = (e) => {
     setSearchValue(e.target.value);
   };
@@ -69,9 +67,8 @@ export function AddMap() {
         setCenter({ lat: parseFloat(lat), lng: parseFloat(lon) });
       }
     } catch (error) {
-      console.error('Error fetching location:', error);
+      console.error("Error fetching location:", error);
     }
-
   };
   useEffect(() => {
     // Manually set the center of the map when the center state changes using useref
@@ -91,7 +88,6 @@ export function AddMap() {
         { leaflet_id: _leaflet_id, latlngs: layer._latlngs[0] },
       ]);
     }
-
   };
 
   const onEdited = (layers) => {
@@ -116,15 +112,15 @@ export function AddMap() {
     });
   };
 
-
-
   const _onDeleted = (e) => {
     const {
       layers: { _layers },
     } = e;
 
     Object.values(_layers).map(({ _leaflet_id }) => {
-      setMapLayers((layers) => layers.filter((l) => l.leaflet_id !== _leaflet_id));
+      setMapLayers((layers) =>
+        layers.filter((l) => l.leaflet_id !== _leaflet_id)
+      );
     });
   };
 
@@ -132,76 +128,129 @@ export function AddMap() {
 
   const handleClick = async () => {
     if (MapLayers.length == 0) {
-      alert("create atleast one polygon")
-      return
+      alert("create atleast one polygon");
+      return;
     }
     try {
-      const response = await axios.post('http://localhost:8000/api/map/addPolygon/',
+      const response = await axios.post(
+        "http://localhost:8000/api/map/addPolygon/",
         MapLayers
       );
       if (response.data.data) {
-        setCustomers(response.data.data)
+        setCustomers(response.data.data);
       }
-      alert(response.data.msg)
+      alert(response.data.msg);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   //
   return (
     <>
-      <MapContainer center={center} zoom={ZOOM_LEVEL} style={{ height: '500px', width: '100%' }} ref={mapRef}>
+      <MapContainer
+        center={center}
+        zoom={ZOOM_LEVEL}
+        style={{ height: "500px", width: "100%" }}
+        ref={mapRef}
+      >
         <FeatureGroup>
           <EditControl
             position="topright"
             onCreated={_onCreate}
-            onEdited={(e) => { onEdited(e.layers) }}
+            onEdited={(e) => {
+              onEdited(e.layers);
+            }}
             onDeleted={_onDeleted}
-            draw={
-              {
-                rectangle: false,
-                circle: false,
-                circlemarker: false,
-                marker: false,
-                polyline: false,
-              }}
-
-
+            draw={{
+              rectangle: false,
+              circle: false,
+              circlemarker: false,
+              marker: false,
+              polyline: false,
+            }}
           />
         </FeatureGroup>
 
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' />
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        />
       </MapContainer>
 
-
-      <div style={{ display: 'flex', justifyContent: 'space-around', backgroundColor: '#242424', paddingTop: '50px', textAlign: 'center' }}>
-
-        <div style={{ display: 'flex' }}>
-
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-around",
+          backgroundColor: "#242424",
+          paddingTop: "50px",
+          textAlign: "center",
+        }}
+      >
+        <div style={{ display: "flex" }}>
           <Form>
-            <Form.Control value={searchValue} onChange={handleSearchChange} placeholder="Search Location" />
+            <Form.Control
+              value={searchValue}
+              onChange={handleSearchChange}
+              placeholder="Search Location"
+            />
           </Form>
           <button type="button" onClick={handleSelect}>
             Search Location
           </button>
         </div>
-        <Button variant="outline-primary" onClick={handleClick}>Save Data(Polygon)</Button>
-        <Button style={{ marginLeft: '20px' }} variant="outline-secondary" onClick={() => { navigate('/') }}>Go Home</Button>
+        <Button variant="outline-primary" onClick={handleClick}>
+          Save Data(Polygon)
+        </Button>
+        <Button
+          style={{ marginLeft: "20px" }}
+          variant="outline-secondary"
+          onClick={() => {
+            navigate("/");
+          }}
+        >
+          Go Home
+        </Button>
       </div>
 
-
-      {customers.length > 0 && <h5 style={{ color: 'white', paddingBottom: '0px', margin: '0', backgroundColor: '#242424' }}>All Users Within This Area: </h5>}
-      <div style={{ display: 'flex', paddingTop: '20px', backgroundColor: '#242424', marginBottom: '20px', flexWrap: 'wrap' }}>
-
+      {customers.length > 0 && (
+        <h5
+          style={{
+            color: "white",
+            paddingBottom: "0px",
+            margin: "0",
+            backgroundColor: "#242424",
+          }}
+        >
+          All Users Within This Area:{" "}
+        </h5>
+      )}
+      <div
+        style={{
+          display: "flex",
+          paddingTop: "20px",
+          backgroundColor: "#242424",
+          marginBottom: "20px",
+          flexWrap: "wrap",
+        }}
+      >
         {customers.map((cust) => {
-          const customer = cust.customer
+          const customer = cust.customer;
           return (
-
-            <div key={customer.id} style={{ backgroundColor: 'white', marginLeft: '20px', borderRadius: '10px', padding: '20px', marginTop: '20px', width: '300px' }}>
-              <h5>FullName:{customer.first_name} {customer.last_name}</h5>
+            <div
+              key={customer.id}
+              style={{
+                backgroundColor: "white",
+                marginLeft: "20px",
+                borderRadius: "10px",
+                padding: "20px",
+                marginTop: "20px",
+                width: "300px",
+              }}
+            >
+              <h5>
+                FullName:{customer.first_name} {customer.last_name}
+              </h5>
               <h5>Email:{customer.email}</h5>
               <h5>PhoneNumber:{customer.phone_number}</h5>
               <h5>Country:{cust.country}</h5>
@@ -210,7 +259,7 @@ export function AddMap() {
               <h5>Address:{cust.address}</h5>
               <h5>ZipCode:{cust.zip_code}</h5>
             </div>
-          )
+          );
         })}
       </div>
     </>
