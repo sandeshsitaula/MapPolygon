@@ -179,14 +179,14 @@ export function AddMap() {
 
       <div style={{ display: 'flex', justifyContent: 'space-around', backgroundColor: '#242424', paddingTop: '50px', textAlign: 'center' }}>
 
-            <div style={{display:'flex'}}>
+        <div style={{ display: 'flex' }}>
 
-        <Form>
-          <Form.Control value={searchValue} onChange={handleSearchChange} placeholder="Search Location" />
-        </Form>
-        <button type="button" onClick={handleSelect}>
-          Search Location
-        </button>
+          <Form>
+            <Form.Control value={searchValue} onChange={handleSearchChange} placeholder="Search Location" />
+          </Form>
+          <button type="button" onClick={handleSelect}>
+            Search Location
+          </button>
         </div>
         <Button variant="outline-primary" onClick={handleClick}>Save Data(Polygon)</Button>
         <Button style={{ marginLeft: '20px' }} variant="outline-secondary" onClick={() => { navigate('/') }}>Go Home</Button>

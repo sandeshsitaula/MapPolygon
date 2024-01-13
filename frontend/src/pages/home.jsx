@@ -12,8 +12,8 @@ function AddNew() {
             <Link to="/addMap">
                 <Button style={{ color: 'white' }} size="lg" variant="outline-primary" >Add New Data</Button>
             </Link>
-             <Link to="/addCustomer">
-                <Button style={{ color: 'white',marginLeft:'25px' }} size="lg" variant="outline-secondary" >Add New Customer</Button>
+            <Link to="/addCustomer">
+                <Button style={{ color: 'white', marginLeft: '25px' }} size="lg" variant="outline-secondary" >Add New Customer</Button>
             </Link>
         </div>
     )
