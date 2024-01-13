@@ -4,6 +4,7 @@ import json
 from django.contrib.gis.geos import Point
 from .models import Customer,ServiceAddress
 from .serializers import CustomerSerializer,ServiceAddressSerializer
+from Mapapp.models import ServiceArea
 import requests
 import os
 
@@ -45,11 +46,25 @@ def AddCustomer(request):
 
         newCustomer=Customer(email=email,first_name=first_name,phone_number=phone_number,last_name=last_name)
 
-        newServiceAddress=ServiceAddress(country=country,state=state,address=address,city=city,zip_code=zip_code,location=Point(lng, lat))
-        newServiceAddress.customer=newCustomer
-
         newCustomer.save()
-        newServiceAddress.save()
+        serviceArea=ServiceArea.objects.filter(polygon__contains=Point(lng,lat)).order_by('-id')
+        print(serviceArea)
+
+        if len(serviceArea)==0:
+            newServiceAddress=ServiceAddress(country=country,state=state,address=address,city=city,zip_code=zip_code,location=Point(lng, lat))
+            newServiceAddress.customer=newCustomer
+            newServiceAddress.save()
+
+        else:
+            for area in serviceArea:
+
+
+                newServiceAddress=ServiceAddress(country=country,state=state,address=address,city=city,zip_code=zip_code,location=Point(lng, lat))
+                newServiceAddress.service_area=area
+                newServiceAddress.customer=newCustomer
+
+                newServiceAddress.save()
+
         data={'message':"customer creation successfull",'data':ServiceAddressSerializer(newServiceAddress).data}
         return Response(data,status=201)
 

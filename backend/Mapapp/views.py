@@ -7,6 +7,7 @@ from .serializers import ServiceAreaSerializer
 from .models import ServiceArea
 from customerapp.models import Customer,ServiceAddress
 from customerapp.serializers import ServiceAddressSerializer
+
 # Create your views here.
 
 #For adding a new polygon
@@ -103,18 +104,8 @@ def GetPolygon(request,polygonId):
     try:
         polygon=ServiceArea.objects.get(id=polygonId)
 
-        serviceAddress=ServiceAddress.objects.filter(location__within=polygon.polygon,service_area=polygon).order_by('-id')
-
-        for service in serviceAddress:
-
-            if service.service_area is None:
-                    # If service_area is null, update the existing service_area
-                    service.service_area = polygon
-                    service.save()
-
+        serviceAddress=ServiceAddress.objects.filter(service_area=polygon).order_by('-id')
         print(serviceAddress)
-
-
 
         if len(serviceAddress)==0:
             serializer=ServiceAreaSerializer(polygon)

@@ -52,7 +52,7 @@ async function handleSubmit(){
        catch(error){
            console.log(error)
            alert(error.error)
-           // setCustomer(intialCustomerState)
+            setCustomer(intialCustomerState)
            setLoading(false)
 
     }
@@ -78,7 +78,7 @@ useEffect(()=>{
             <Form.Control value={customer.zipCode} style={{marginBottom:'15px'}}  onChange={handleChange}type="text" name="zipCode" placeholder="Zip Code" />
             <Form.Control value={customer.phoneNumber} style={{marginBottom:'25px'}}  onChange={handleChange}type="text" name="phoneNumber" placeholder="Phone Number (eg:+977-90000000)" />
             <div style={{textAlign:'center',marginBottom:'30px'}}>
-                <Button  style={{width:'75%'}}variant="outline-success" onClick={handleSubmit}>{loading?"Loading":"Submit Customer"}</Button>
+                <Button  disabled={loading}style={{width:'75%'}}variant="outline-success" onClick={handleSubmit}>{loading?"Loading":"Submit Customer"}</Button>
             <Button onClick={()=>navigate('/')}  style={{width:'75%',marginTop:'25px'}}variant="outline-danger">Go Back(Home)</Button>
             </div>
             </Form>
