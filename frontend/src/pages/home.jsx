@@ -71,8 +71,7 @@ function ShowSaved({ savedData }) {
             lat:averageLat,
             lng: averageLng,
           };
-          const zoomLevel=localStorage.getItem(`ZoomLevelPolygon${data.id}`)||12;
-          console.log(zoomLevel)
+          const zoomLevel=localStorage.getItem(`ZoomLevelPolygon${data.id}`)-1||12;
 
 
 
