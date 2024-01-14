@@ -106,9 +106,7 @@ useEffect(() => {
   getUsers()
 },[])
 
-   useEffect(()=>{
-     console.log(polygonId)
-  })
+
 
 
   //for location searching

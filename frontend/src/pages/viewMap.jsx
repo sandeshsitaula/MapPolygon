@@ -14,27 +14,33 @@ export function ViewMap() {
   const [data, setData] = useState([]);
   const [users,setUsers]=useState(null)
 
-
-  // Function to handle 'beforeunload' event
-  const handleBeforeUnload = () => {
-    const map = mapRef.current;
-    if (map) {
-      const zoomLevel = map.getZoom();
-      localStorage.setItem("zoomLevel", zoomLevel);
-    }
-  };
-
-  // Add 'beforeunload' event listener when the component mounts
   useEffect(() => {
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    // Remove the event listener when the component unmounts
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
+    const handleZoomChanged = () => {
+      // Your code to run when the zoom level changes
+      const map = mapRef.current;
+      if (map) {
+        const zoomLevel = map.getZoom();
+        localStorage.setItem("AddzoomLevel", zoomLevel);
+          localStorage.setItem(`ZoomLevelPolygon${id}`, zoomLevel);
+      }
     };
-  }, []); // Empty dependency array to run this effect once when the component mounts
 
-  const ZOOM_LEVEL = localStorage.getItem("zoomLevel") || 12;
+    // Assuming mapRef.current is your reference to the map object
+    const map = mapRef.current;
+    // Check if the map object is available
+    if (map) {
+      // Add an event listener for the zoomChanged event
+      map.on('zoomend', handleZoomChanged);
+
+      // Clean up the event listener when the component is unmounted
+      return () => {
+        map.off('zoomend', handleZoomChanged);
+      };
+    }
+  }, [center]); // Include mapRef and polygonId in the dependency array
+
+
+  const ZOOM_LEVEL = localStorage.getItem(`ZoomLevelPolygon${id}`) || 12;
 
   //delete
 
