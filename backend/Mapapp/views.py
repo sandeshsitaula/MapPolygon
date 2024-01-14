@@ -45,7 +45,8 @@ def AddPolygon(request):
                 # Handle the case where a matching polygon is found
                 # You may want to do something specific in this case
 
-                existing_polygon.delete()
+                continue
+
 
             # If not found, create a new polygon
             newServiceArea = ServiceArea.objects.create(polygon=polygon_geometry)
