@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import L from "leaflet";
 import { MapContainer, TileLayer, Polygon, Marker } from "react-leaflet";
 import { Button } from "react-bootstrap";
-
+import AxiosInstance from '../axiosInstance'
 export function ViewMap() {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -12,6 +12,8 @@ export function ViewMap() {
   const [coordinates, setCoordinates] = useState([]);
   const [center, setCenter] = useState({ lat: 51.505, lng: -0.09 });
   const [data, setData] = useState([]);
+  const [users,setUsers]=useState(null)
+
 
   // Function to handle 'beforeunload' event
   const handleBeforeUnload = () => {
@@ -35,6 +37,7 @@ export function ViewMap() {
   const ZOOM_LEVEL = localStorage.getItem("zoomLevel") || 12;
 
   //delete
+
   const handleDelete = async () => {
     const response = await axios.get(
       `http://localhost:8000/api/map/deletePolygon/${id}/`
@@ -42,6 +45,8 @@ export function ViewMap() {
     navigate("/");
     alert(response.data.message);
   };
+
+
   useEffect(() => {
     async function getData() {
       try {
@@ -89,6 +94,18 @@ export function ViewMap() {
     getData();
   }, [id]);
 
+ useEffect(()=>{
+   async function getUsers(){
+     try{
+     const response=await AxiosInstance.get('api/customer/getAllCustomerLocation/')
+     setUsers(response.data.data)
+     }catch(error){
+       console.log(error)
+    }
+  }
+  getUsers()
+},[])
+
   //for updating map
   useEffect(() => {
     // Manually set the center of the map when the center state changes using useref
@@ -113,31 +130,19 @@ export function ViewMap() {
             />
 
             <Polygon positions={coordinates} pathOptions={{ color: "blue" }} />
-            {data.map((temp) => {
-              const location = temp.location;
-              const coordinatesString = location.substring(
-                17,
-                location.length - 2
-              );
-              // Split the coordinates into individual points
-              const points = coordinatesString.split(",").map((coord) =>
-                coord
-                  .trim()
-                  .split(/\s+/)
-                  .map((c) => parseFloat(c))
-              );
-              // Swap latitude and longitude for Leaflet
-              const userCoordinates = points.map((point) => [
-                point[1],
-                point[0],
-              ]);
 
-              return (
-                <Marker key={temp.id} position={userCoordinates[0]}>
-                  {/* Customize the Marker as needed */}
+
+
+              {users && users.map((user)=>{
+                return(
+                <Marker key={user[0]} position={user}>
                 </Marker>
-              );
-            })}
+
+                )
+              })
+
+            }
+
           </MapContainer>
 
           <div

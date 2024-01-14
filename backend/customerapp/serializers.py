@@ -12,3 +12,9 @@ class ServiceAddressSerializer(serializers.ModelSerializer):
     class Meta:
         model=ServiceAddress
         fields='__all__'
+
+class LocationSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model=ServiceAddress
+        fields=['location']

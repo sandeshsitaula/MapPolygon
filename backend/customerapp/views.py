@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view
 import json
 from django.contrib.gis.geos import Point
 from .models import Customer,ServiceAddress
-from .serializers import CustomerSerializer,ServiceAddressSerializer
+from .serializers import CustomerSerializer,ServiceAddressSerializer,LocationSerializer
 from Mapapp.models import ServiceArea
 import requests
 import os
@@ -65,7 +65,7 @@ def AddCustomer(request):
 
                 newServiceAddress.save()
 
-        data={'message':"customer creation successfull",'data':ServiceAddressSerializer(newServiceAddress).data}
+        data={'message':"customer creation successfull",'data':ServiceAddressSerializer(newServiceAddress,many=True).data}
         return Response(data,status=201)
 
 
@@ -73,4 +73,30 @@ def AddCustomer(request):
     except Exception as e:
         error=str(e)
         print(error)
-        return Response({'error':f"Unexpected Error .. {error}"},400)
+        return Response({'error':f"Unexpected Error .. {error}"},status=400)
+
+
+
+#get all customer lcoation
+@api_view(['GET'])
+def GetAllCustomerLocation(request):
+    try:
+
+        all_customer_location = ServiceAddress.objects.all().values_list('location', flat=True).order_by('-id').distinct()
+        print(all_customer_location)
+        locations = []
+        seen_coordinates = set()
+
+        for point in all_customer_location:
+            coordinates = (point.y, point.x)
+
+            # Check if coordinates are already in the result list
+            if coordinates not in seen_coordinates:
+                locations.append(coordinates)
+                seen_coordinates.add(coordinates)
+        print(locations)
+        return Response({'data':locations}, status=200)
+    except Exception as e:
+       error=str(e)
+       print(error)
+       return Response({'error':f"Unexpected error occured ...{error}"},status=400)

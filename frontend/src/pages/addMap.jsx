@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from "react";
 import L from "leaflet";
-import { MapContainer, TileLayer, FeatureGroup } from "react-leaflet";
+import { MapContainer, TileLayer, FeatureGroup,Marker } from "react-leaflet";
 import { EditControl } from "react-leaflet-draw";
 import { Icon } from "leaflet";
 import { useRef } from "react";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
-import axios from "axios";
 import { Button, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-
+import AxiosInstance from '../axiosInstance'
 delete L.Icon.Default.prototype._getIconUrl;
 
 L.Icon.Default.mergeOptions({
@@ -26,6 +25,7 @@ export function AddMap() {
   const [MapLayers, setMapLayers] = useState([]);
   const mapRef = useRef();
   const navigate = useNavigate();
+  const [users,setUsers]=useState(null)
   const [customers, setCustomers] = useState([]);
 
   // Function to handle 'beforeunload' event
@@ -49,11 +49,27 @@ export function AddMap() {
 
   const ZOOM_LEVEL = localStorage.getItem("AddzoomLevel") || 12;
 
+   useEffect(()=>{
+   async function getUsers(){
+     try{
+     const response=await AxiosInstance.get('api/customer/getAllCustomerLocation/')
+     setUsers(response.data.data)
+     }catch(error){
+       console.log(error)
+    }
+  }
+  getUsers()
+},[])
+
+
+
   //for location searching
   const [searchValue, setSearchValue] = useState("");
   const handleSearchChange = (e) => {
     setSearchValue(e.target.value);
   };
+
+
 
   const handleSelect = async () => {
     try {
@@ -132,8 +148,8 @@ export function AddMap() {
       return;
     }
     try {
-      const response = await axios.post(
-        "http://localhost:8000/api/map/addPolygon/",
+      const response = await AxiosInstance.post(
+        "api/map/addPolygon/",
         MapLayers
       );
       if (response.data.data) {
@@ -144,6 +160,7 @@ export function AddMap() {
       console.log(error);
     }
   };
+
 
   //
   return (
@@ -176,6 +193,15 @@ export function AddMap() {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
+         {users && users.map((user)=>{
+                return(
+                <Marker key={user[0]} position={user}>
+                </Marker>
+
+                )
+              })
+
+            }
       </MapContainer>
 
       <div
