@@ -72,9 +72,9 @@ def AddPolygon(request):
                     listData.append(ServiceAddressSerializer(newServiceAddress).data)
 
         if len(listData)==0:
-            return Response({'msg':'sucessfully added'})
+            return Response({'msg':'sucessfully added','polygonId':newServiceArea.id},status=200)
 
-        return Response({'msg': 'Successfully added', 'data': listData})
+        return Response({'msg': 'Successfully added','data':listData, 'polygonId': newServiceArea.id})
 
     except Exception as e:
         print(f"Error: {e}")

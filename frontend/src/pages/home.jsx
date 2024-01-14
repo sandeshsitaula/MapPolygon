@@ -48,7 +48,6 @@ function ShowSaved({ savedData }) {
     const polygonCoordinates = points.map((point) => [point[1], point[0]]);
     return polygonCoordinates;
   };
-  const ZOOM_LEVEL = 7;
   const mapRef = useRef();
 
   return (
@@ -66,7 +65,16 @@ function ShowSaved({ savedData }) {
         {savedData
           ? savedData.map((data) => {
               const polygonCoordinates = parsePolygon(data.polygon);
-              console.log(data);
+               const averageLat = polygonCoordinates.reduce((sum, coord) => sum + coord[0], 0) / polygonCoordinates.length;
+            const averageLng = polygonCoordinates.reduce((sum, coord) => sum + coord[1], 0) / polygonCoordinates.length;
+          const center={
+            lat:averageLat,
+            lng: averageLng,
+          };
+          const zoomLevel=localStorage.getItem(`ZoomLevelPolygon${data.id}`)||12;
+          console.log(zoomLevel)
+
+
 
               return (
                 <Link
@@ -86,9 +94,9 @@ function ShowSaved({ savedData }) {
                     <MapContainer
                       dragging={false}
                       scrollWheelZoom={false}
-                      center={polygonCoordinates[0]}
+                      center={center}
                       zoomControl={false}
-                      zoom={ZOOM_LEVEL}
+                      zoom={zoomLevel}
                       style={{ height: "250px", width: "100%" }}
                       ref={mapRef}
                     >

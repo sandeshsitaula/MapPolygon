@@ -78,10 +78,12 @@ export function ViewMap() {
         const polygonCoordinates = points.map((point) => [point[1], point[0]]);
 
         setCoordinates(polygonCoordinates);
+      const averageLat = polygonCoordinates.reduce((sum, coord) => sum + coord[0], 0) / polygonCoordinates.length;
+      const averageLng = polygonCoordinates.reduce((sum, coord) => sum + coord[1], 0) / polygonCoordinates.length;
         if (polygonCoordinates.length > 0) {
           setCenter({
-            lat: polygonCoordinates[0][0],
-            lng: polygonCoordinates[0][1],
+            lat:averageLat,
+            lng: averageLng,
           });
         }
       } catch (error) {

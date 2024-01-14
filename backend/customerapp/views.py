@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view
 import json
 from django.contrib.gis.geos import Point
 from .models import Customer,ServiceAddress
-from .serializers import CustomerSerializer,ServiceAddressSerializer,LocationSerializer
+from .serializers import CustomerSerializer,ServiceAddressSerializer
 from Mapapp.models import ServiceArea
 import requests
 import os
@@ -48,15 +48,17 @@ def AddCustomer(request):
 
         newCustomer.save()
         serviceArea=ServiceArea.objects.filter(polygon__contains=Point(lng,lat)).order_by('-id')
-        print(serviceArea)
+        print(serviceArea,Point(lng,lat))
 
         if len(serviceArea)==0:
+            print('in1')
             newServiceAddress=ServiceAddress(country=country,state=state,address=address,city=city,zip_code=zip_code,location=Point(lng, lat))
             newServiceAddress.customer=newCustomer
             newServiceAddress.save()
 
         else:
             for area in serviceArea:
+                print('in2')
 
 
                 newServiceAddress=ServiceAddress(country=country,state=state,address=address,city=city,zip_code=zip_code,location=Point(lng, lat))
@@ -65,7 +67,7 @@ def AddCustomer(request):
 
                 newServiceAddress.save()
 
-        data={'message':"customer creation successfull",'data':ServiceAddressSerializer(newServiceAddress,many=True).data}
+        data={'message':"customer creation successfull"}
         return Response(data,status=201)
 
 
@@ -83,7 +85,6 @@ def GetAllCustomerLocation(request):
     try:
 
         all_customer_location = ServiceAddress.objects.all().values_list('location', flat=True).order_by('-id').distinct()
-        print(all_customer_location)
         locations = []
         seen_coordinates = set()
 
@@ -94,7 +95,6 @@ def GetAllCustomerLocation(request):
             if coordinates not in seen_coordinates:
                 locations.append(coordinates)
                 seen_coordinates.add(coordinates)
-        print(locations)
         return Response({'data':locations}, status=200)
     except Exception as e:
        error=str(e)

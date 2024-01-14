@@ -27,6 +27,39 @@ export function AddMap() {
   const navigate = useNavigate();
   const [users,setUsers]=useState(null)
   const [customers, setCustomers] = useState([]);
+  const [polygonId,setPolygonId]=useState(-1)
+
+
+  useEffect(() => {
+    const handleZoomChanged = () => {
+      // Your code to run when the zoom level changes
+      const map = mapRef.current;
+      if (map) {
+        const zoomLevel = map.getZoom();
+        localStorage.setItem("AddzoomLevel", zoomLevel);
+        console.log('polygon', polygonId);
+        if (polygonId !== -1) {
+          localStorage.setItem(`ZoomLevelPolygon${polygonId}`, zoomLevel);
+        }
+      }
+    };
+
+    // Assuming mapRef.current is your reference to the map object
+    const map = mapRef.current;
+
+    // Check if the map object is available
+    if (map) {
+      // Add an event listener for the zoomChanged event
+      map.on('zoomend', handleZoomChanged);
+
+      // Clean up the event listener when the component is unmounted
+      return () => {
+        map.off('zoomend', handleZoomChanged);
+      };
+    }
+  }, [mapRef, polygonId]); // Include mapRef and polygonId in the dependency array
+
+
 
   // Function to handle 'beforeunload' event
   const handleBeforeUnload = () => {
@@ -37,18 +70,30 @@ export function AddMap() {
     }
   };
 
-  // Add 'beforeunload' event listener when the component mounts
-  useEffect(() => {
-    window.addEventListener("beforeunload", handleBeforeUnload);
 
-    // Remove the event listener when the component unmounts
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, []); // Empty dependency array to run this effect once when the component mounts
+
+
+// Add 'beforeunload' event listener when the component mounts
+useEffect(() => {
+  const unloadListener = (event) => {
+    handleBeforeUnload();
+    // The following line is necessary for older browsers
+    event.returnValue = "";
+  };
+
+  window.addEventListener("beforeunload", unloadListener);
+
+  // Remove the event listener when the component unmounts
+  return () => {
+    window.removeEventListener("beforeunload", unloadListener);
+  };
+}, []); // Include polygonId in the dependency array
+
 
   const ZOOM_LEVEL = localStorage.getItem("AddzoomLevel") || 12;
 
+
+  //get all users
    useEffect(()=>{
    async function getUsers(){
      try{
@@ -61,6 +106,9 @@ export function AddMap() {
   getUsers()
 },[])
 
+   useEffect(()=>{
+     console.log(polygonId)
+  })
 
 
   //for location searching
@@ -152,10 +200,19 @@ export function AddMap() {
         "api/map/addPolygon/",
         MapLayers
       );
+      console.log(response)
       if (response.data.data) {
         setCustomers(response.data.data);
       }
+      if (response.data.polygonId){
+
+        setPolygonId(response.data.polygonId)
+      }
       alert(response.data.msg);
+
+      const map = mapRef.current;
+      const zoomLevel=map.getZoom()
+          localStorage.setItem(`ZoomLevelPolygon${response.data.polygonId}`, zoomLevel);
     } catch (error) {
       console.log(error);
     }
