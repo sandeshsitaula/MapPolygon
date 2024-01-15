@@ -12,21 +12,20 @@ import os
 def geocode_location(address,country, state, city):
     api_key=os.getenv('OPENCAGE_API')
     base_url = 'https://api.opencagedata.com/geocode/v1/json'
-
     params = {
         'q': f'{address},{city}, {state}, {country}',
         'key': api_key,
     }
-
     response = requests.get(base_url, params=params)
     data = response.json()
-
     if data and 'results' in data and data['results']:
         geometry = data['results'][0]['geometry']
         return geometry['lng'], geometry['lat']
     else:
         return None,None
 
+
+#For adding new Customer
 @api_view(['POST'])
 def AddCustomer(request):
     try:
@@ -41,37 +40,31 @@ def AddCustomer(request):
         address=data.get('address')
         email=data.get('email')
         lng, lat = geocode_location(address,country, state, city)
+
         if (lng is None or lat is None):
             return Response({'error':f'Unexpected errro couldnot find your location try again after correcting it'},401)
 
         newCustomer=Customer(email=email,first_name=first_name,phone_number=phone_number,last_name=last_name)
-
         newCustomer.save()
-        serviceArea=ServiceArea.objects.filter(polygon__contains=Point(lng,lat)).order_by('-id')
-        print(serviceArea,Point(lng,lat))
 
+        serviceArea=ServiceArea.objects.filter(polygon__contains=Point(lng,lat)).order_by('-id')
+
+        #If there are no service area then just add one
         if len(serviceArea)==0:
-            print('in1')
             newServiceAddress=ServiceAddress(country=country,state=state,address=address,city=city,zip_code=zip_code,location=Point(lng, lat))
             newServiceAddress.customer=newCustomer
             newServiceAddress.save()
 
+            #If there are multiple service areas make multiple instances of serviceaddress with varying service area
         else:
             for area in serviceArea:
-                print('in2')
-
-
                 newServiceAddress=ServiceAddress(country=country,state=state,address=address,city=city,zip_code=zip_code,location=Point(lng, lat))
                 newServiceAddress.service_area=area
                 newServiceAddress.customer=newCustomer
-
                 newServiceAddress.save()
 
         data={'message':"customer creation successfull"}
         return Response(data,status=201)
-
-
-
     except Exception as e:
         error=str(e)
         print(error)
@@ -83,11 +76,11 @@ def AddCustomer(request):
 @api_view(['GET'])
 def GetAllCustomerLocation(request):
     try:
-
         all_customer_location = ServiceAddress.objects.all().values_list('location', flat=True).order_by('-id').distinct()
+
+        #Get all user location but get just unique customer location
         locations = []
         seen_coordinates = set()
-
         for point in all_customer_location:
             coordinates = (point.y, point.x)
 
@@ -95,7 +88,9 @@ def GetAllCustomerLocation(request):
             if coordinates not in seen_coordinates:
                 locations.append(coordinates)
                 seen_coordinates.add(coordinates)
+
         return Response({'data':locations}, status=200)
+
     except Exception as e:
        error=str(e)
        print(error)

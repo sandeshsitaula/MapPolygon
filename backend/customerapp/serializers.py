@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Customer,ServiceAddress
 from Mapapp.serializers import ServiceAreaSerializer
+
 class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model=Customer

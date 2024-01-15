@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import L from "leaflet";
-import { MapContainer, TileLayer, FeatureGroup,Marker } from "react-leaflet";
+import { MapContainer, TileLayer, FeatureGroup, Marker } from "react-leaflet";
 import { EditControl } from "react-leaflet-draw";
 import { Icon } from "leaflet";
 import { useRef } from "react";
@@ -25,9 +25,9 @@ export function AddMap() {
   const [MapLayers, setMapLayers] = useState([]);
   const mapRef = useRef();
   const navigate = useNavigate();
-  const [users,setUsers]=useState(null)
+  const [users, setUsers] = useState(null)
   const [customers, setCustomers] = useState([]);
-  const [polygonId,setPolygonId]=useState(-1)
+  const [polygonId, setPolygonId] = useState(-1)
 
 
   useEffect(() => {
@@ -73,38 +73,38 @@ export function AddMap() {
 
 
 
-// Add 'beforeunload' event listener when the component mounts
-useEffect(() => {
-  const unloadListener = (event) => {
-    handleBeforeUnload();
-    // The following line is necessary for older browsers
-    event.returnValue = "";
-  };
+  // Add 'beforeunload' event listener when the component mounts
+  useEffect(() => {
+    const unloadListener = (event) => {
+      handleBeforeUnload();
+      // The following line is necessary for older browsers
+      event.returnValue = "";
+    };
 
-  window.addEventListener("beforeunload", unloadListener);
+    window.addEventListener("beforeunload", unloadListener);
 
-  // Remove the event listener when the component unmounts
-  return () => {
-    window.removeEventListener("beforeunload", unloadListener);
-  };
-}, []); // Include polygonId in the dependency array
+    // Remove the event listener when the component unmounts
+    return () => {
+      window.removeEventListener("beforeunload", unloadListener);
+    };
+  }, []); // Include polygonId in the dependency array
 
 
   const ZOOM_LEVEL = localStorage.getItem("AddzoomLevel") || 12;
 
 
   //get all users
-   useEffect(()=>{
-   async function getUsers(){
-     try{
-     const response=await AxiosInstance.get('api/customer/getAllCustomerLocation/')
-     setUsers(response.data.data)
-     }catch(error){
-       console.log(error)
+  useEffect(() => {
+    async function getUsers() {
+      try {
+        const response = await AxiosInstance.get('api/customer/getAllCustomerLocation/')
+        setUsers(response.data.data)
+      } catch (error) {
+        console.log(error)
+      }
     }
-  }
-  getUsers()
-},[])
+    getUsers()
+  }, [])
 
 
 
@@ -202,15 +202,15 @@ useEffect(() => {
       if (response.data.data) {
         setCustomers(response.data.data);
       }
-      if (response.data.polygonId){
+      if (response.data.polygonId) {
 
         setPolygonId(response.data.polygonId)
       }
       alert(response.data.msg);
 
       const map = mapRef.current;
-      const zoomLevel=map.getZoom()
-          localStorage.setItem(`ZoomLevelPolygon${response.data.polygonId}`, zoomLevel);
+      const zoomLevel = map.getZoom()
+      localStorage.setItem(`ZoomLevelPolygon${response.data.polygonId}`, zoomLevel);
     } catch (error) {
       console.log(error);
     }
@@ -248,15 +248,15 @@ useEffect(() => {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
-         {users && users.map((user)=>{
-                return(
-                <Marker key={user[0]} position={user}>
-                </Marker>
+        {users && users.map((user) => {
+          return (
+            <Marker key={user[0]} position={user}>
+            </Marker>
 
-                )
-              })
+          )
+        })
 
-            }
+        }
       </MapContainer>
 
       <div

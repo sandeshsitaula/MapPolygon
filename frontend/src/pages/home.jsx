@@ -64,54 +64,54 @@ function ShowSaved({ savedData }) {
       >
         {savedData
           ? savedData.map((data) => {
-              const polygonCoordinates = parsePolygon(data.polygon);
-               const averageLat = polygonCoordinates.reduce((sum, coord) => sum + coord[0], 0) / polygonCoordinates.length;
+            const polygonCoordinates = parsePolygon(data.polygon);
+            const averageLat = polygonCoordinates.reduce((sum, coord) => sum + coord[0], 0) / polygonCoordinates.length;
             const averageLng = polygonCoordinates.reduce((sum, coord) => sum + coord[1], 0) / polygonCoordinates.length;
-          const center={
-            lat:averageLat,
-            lng: averageLng,
-          };
-          const zoomLevel=localStorage.getItem(`ZoomLevelPolygon${data.id}`)-1||12;
+            const center = {
+              lat: averageLat,
+              lng: averageLng,
+            };
+            const zoomLevel = localStorage.getItem(`ZoomLevelPolygon${data.id}`) - 1 || 12;
 
 
 
-              return (
-                <Link
-                  key={data.id}
-                  to={`/viewMap/${data.id}`}
-                  style={{ margin: "20px", width: "350px", height: "300px" }}
+            return (
+              <Link
+                key={data.id}
+                to={`/viewMap/${data.id}`}
+                style={{ margin: "20px", width: "350px", height: "300px" }}
+              >
+                <div
+                  id={data.id}
+                  style={{
+                    padding: "10px",
+                    backgroundColor: "gray",
+                    color: "white",
+                  }}
                 >
-                  <div
-                    id={data.id}
-                    style={{
-                      padding: "10px",
-                      backgroundColor: "gray",
-                      color: "white",
-                    }}
+                  Polygon Id:{data.id}
+                  <MapContainer
+                    dragging={false}
+                    scrollWheelZoom={false}
+                    center={center}
+                    zoomControl={false}
+                    zoom={zoomLevel}
+                    style={{ height: "250px", width: "100%" }}
+                    ref={mapRef}
                   >
-                    Polygon Id:{data.id}
-                    <MapContainer
-                      dragging={false}
-                      scrollWheelZoom={false}
-                      center={center}
-                      zoomControl={false}
-                      zoom={zoomLevel}
-                      style={{ height: "250px", width: "100%" }}
-                      ref={mapRef}
-                    >
-                      <TileLayer
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                      />
-                      <Polygon
-                        positions={polygonCoordinates}
-                        pathOptions={{ color: "blue" }}
-                      />
-                    </MapContainer>
-                  </div>
-                </Link>
-              );
-            })
+                    <TileLayer
+                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    />
+                    <Polygon
+                      positions={polygonCoordinates}
+                      pathOptions={{ color: "blue" }}
+                    />
+                  </MapContainer>
+                </div>
+              </Link>
+            );
+          })
           : "No Data To Show Right Now"}
       </div>
     </div>

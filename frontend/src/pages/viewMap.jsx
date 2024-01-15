@@ -12,7 +12,7 @@ export function ViewMap() {
   const [coordinates, setCoordinates] = useState([]);
   const [center, setCenter] = useState({ lat: 51.505, lng: -0.09 });
   const [data, setData] = useState([]);
-  const [users,setUsers]=useState(null)
+  const [users, setUsers] = useState(null)
 
   useEffect(() => {
     const handleZoomChanged = () => {
@@ -21,7 +21,7 @@ export function ViewMap() {
       if (map) {
         const zoomLevel = map.getZoom();
         localStorage.setItem("AddzoomLevel", zoomLevel);
-          localStorage.setItem(`ZoomLevelPolygon${id}`, zoomLevel);
+        localStorage.setItem(`ZoomLevelPolygon${id}`, zoomLevel);
       }
     };
 
@@ -84,11 +84,11 @@ export function ViewMap() {
         const polygonCoordinates = points.map((point) => [point[1], point[0]]);
 
         setCoordinates(polygonCoordinates);
-      const averageLat = polygonCoordinates.reduce((sum, coord) => sum + coord[0], 0) / polygonCoordinates.length;
-      const averageLng = polygonCoordinates.reduce((sum, coord) => sum + coord[1], 0) / polygonCoordinates.length;
+        const averageLat = polygonCoordinates.reduce((sum, coord) => sum + coord[0], 0) / polygonCoordinates.length;
+        const averageLng = polygonCoordinates.reduce((sum, coord) => sum + coord[1], 0) / polygonCoordinates.length;
         if (polygonCoordinates.length > 0) {
           setCenter({
-            lat:averageLat,
+            lat: averageLat,
             lng: averageLng,
           });
         }
@@ -102,17 +102,17 @@ export function ViewMap() {
     getData();
   }, [id]);
 
- useEffect(()=>{
-   async function getUsers(){
-     try{
-     const response=await AxiosInstance.get('api/customer/getAllCustomerLocation/')
-     setUsers(response.data.data)
-     }catch(error){
-       console.log(error)
+  useEffect(() => {
+    async function getUsers() {
+      try {
+        const response = await AxiosInstance.get('api/customer/getAllCustomerLocation/')
+        setUsers(response.data.data)
+      } catch (error) {
+        console.log(error)
+      }
     }
-  }
-  getUsers()
-},[])
+    getUsers()
+  }, [])
 
   //for updating map
   useEffect(() => {
@@ -141,13 +141,13 @@ export function ViewMap() {
 
 
 
-              {users && users.map((user)=>{
-                return(
+            {users && users.map((user) => {
+              return (
                 <Marker key={user[0]} position={user}>
                 </Marker>
 
-                )
-              })
+              )
+            })
 
             }
 
