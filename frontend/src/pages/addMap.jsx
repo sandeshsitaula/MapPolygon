@@ -267,30 +267,8 @@ export function AddMap() {
       </div>
 
       {customers.length > 0 && (
-        <h5
-          style={{
-            color: "white",
-            paddingBottom: "0px",
-            margin: "0",
-            backgroundColor: "#242424",
-          }}
-        >
-          All Users Within This Area:{" "}
-        </h5>
-      )}
-      <div
-        style={{
-          display: "flex",
-          paddingTop: "20px",
-          backgroundColor: "#242424",
-          marginBottom: "20px",
-          flexWrap: "wrap",
-        }}
-      >
-        {customers.map((data) => (
-          <CustomerDetail data={data} />
-        ))}
-      </div>
+        <CustomerDetail customers={customers} />
+)}
     </>
   );
 }

@@ -180,31 +180,8 @@ export function ViewMap() {
             </Button>
           </div>
 
-          {data.length > 0 && (
-            <h5
-              style={{
-                color: "white",
-                paddingBottom: "0px",
-                margin: "0",
-                backgroundColor: "#242424",
-              }}
-            >
-              All Users Within This Area:{" "}
-            </h5>
-          )}
-          <div
-            style={{
-              display: "flex",
-              paddingTop: "20px",
-              backgroundColor: "#242424",
-              marginBottom: "20px",
-              flexWrap: "wrap",
-            }}
-          >
-            {data.map((customers) => (
-              <CustomerDetail key={customers.customer.id} data={customers} />
-                  ))}
-          </div>
+            {data.length>0&& <CustomerDetail customers={data} />}
+
         </>
       ) : (
         "none"

@@ -1,6 +1,7 @@
-export function CustomerDetail(props){
-    const data=props.data
-    console.log(data)
+function CustomerList(props){
+    console.log('hell')
+      const data=props.data
+      console.log(data)
     const customer=data.customer
     return(
            <div
@@ -25,5 +26,37 @@ export function CustomerDetail(props){
               <h5>Address:{data.address}</h5>
               <h5>ZipCode:{data.zip_code}</h5>
             </div>
+    )
+}
+
+export function CustomerDetail(props){
+    const data=props.customers
+    console.log(data)
+    return(
+        <>
+            <h5
+              style={{
+                color: "white",
+                paddingBottom: "0px",
+                margin: "0",
+                backgroundColor: "#242424",
+              }}
+            >
+              All Users Within This Area:{" "}
+            </h5>
+          <div
+            style={{
+              display: "flex",
+              paddingTop: "20px",
+              backgroundColor: "#242424",
+              marginBottom: "20px",
+              flexWrap: "wrap",
+            }}
+          >
+            {data.map((customers) => (
+              <CustomerList key={customers.customer.id} data={customers} />
+                  ))}
+          </div>
+          </>
     )
 }
