@@ -116,7 +116,6 @@ def DeletePolygon(request,polygonId):
         error=str(e)
         return Response({'error':f"Unexpected Error occured"},status=400)
 
-'''
 #update a polygon given an index
 @api_view(['POST'])
 def UpdatePolygon(request,polygonId):
@@ -145,4 +144,3 @@ def UpdatePolygon(request,polygonId):
     except Exception as e:
         error=str(e)
         return Response({'msg':f"Unexpected error {error}"},status=400)
-'''

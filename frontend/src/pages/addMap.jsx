@@ -2,23 +2,16 @@ import React, { useState, useEffect } from "react";
 import L from "leaflet";
 import { MapContainer, TileLayer, FeatureGroup, Marker } from "react-leaflet";
 import { EditControl } from "react-leaflet-draw";
-import { Icon } from "leaflet";
 import { useRef } from "react";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
 import { Button, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import AxiosInstance from '../axiosInstance'
+import {CustomerDetail} from '../components/customerDetail'
 
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/images/marker-icon.png",
-  iconUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/images/marker-icon.png",
-  shadowUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/images/marker-shadow.png",
-});
+
+
 
 export function AddMap() {
   const [center, setCenter] = useState({ lat: 51.505, lng: -0.09 });
@@ -294,33 +287,9 @@ export function AddMap() {
           flexWrap: "wrap",
         }}
       >
-        {customers.map((cust) => {
-          const customer = cust.customer;
-          return (
-            <div
-              key={customer.id}
-              style={{
-                backgroundColor: "white",
-                marginLeft: "20px",
-                borderRadius: "10px",
-                padding: "20px",
-                marginTop: "20px",
-                width: "300px",
-              }}
-            >
-              <h5>
-                FullName:{customer.first_name} {customer.last_name}
-              </h5>
-              <h5>Email:{customer.email}</h5>
-              <h5>PhoneNumber:{customer.phone_number}</h5>
-              <h5>Country:{cust.country}</h5>
-              <h5>State:{cust.state}</h5>
-              <h5>City:{cust.city}</h5>
-              <h5>Address:{cust.address}</h5>
-              <h5>ZipCode:{cust.zip_code}</h5>
-            </div>
-          );
-        })}
+        {customers.map((data) => (
+          <CustomerDetail data={data} />
+        ))}
       </div>
     </>
   );

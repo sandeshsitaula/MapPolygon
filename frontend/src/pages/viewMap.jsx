@@ -5,6 +5,8 @@ import L from "leaflet";
 import { MapContainer, TileLayer, Polygon, Marker } from "react-leaflet";
 import { Button } from "react-bootstrap";
 import AxiosInstance from '../axiosInstance'
+import {CustomerDetail} from '../components/customerDetail'
+
 export function ViewMap() {
 
   const navigate = useNavigate();
@@ -199,33 +201,9 @@ export function ViewMap() {
               flexWrap: "wrap",
             }}
           >
-            {data.map((customers) => {
-              const customer = customers.customer;
-              return (
-                <div
-                  key={customer.id}
-                  style={{
-                    backgroundColor: "white",
-                    marginLeft: "20px",
-                    borderRadius: "10px",
-                    padding: "20px",
-                    marginTop: "20px",
-                    width: "300px",
-                  }}
-                >
-                  <h5>
-                    FullName:{customer.first_name} {customer.last_name}
-                  </h5>
-                  <h5>Email:{customer.email}</h5>
-                  <h5>PhoneNumber:{customer.phone_number}</h5>
-                  <h5>Country:{customers.country}</h5>
-                  <h5>State:{customers.state}</h5>
-                  <h5>City:{customers.city}</h5>
-                  <h5>Address:{customers.address}</h5>
-                  <h5>ZipCode:{customers.zip_code}</h5>
-                </div>
-              );
-            })}
+            {data.map((customers) => (
+              <CustomerDetail key={customers.customer.id} data={customers} />
+                  ))}
           </div>
         </>
       ) : (
