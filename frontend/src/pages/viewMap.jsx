@@ -6,6 +6,7 @@ import { MapContainer, TileLayer, Polygon, Marker } from "react-leaflet";
 import { Button } from "react-bootstrap";
 import AxiosInstance from '../axiosInstance'
 export function ViewMap() {
+
   const navigate = useNavigate();
   const { id } = useParams();
   const mapRef = useRef();
@@ -31,7 +32,6 @@ export function ViewMap() {
     if (map) {
       // Add an event listener for the zoomChanged event
       map.on('zoomend', handleZoomChanged);
-
       // Clean up the event listener when the component is unmounted
       return () => {
         map.off('zoomend', handleZoomChanged);
@@ -139,18 +139,13 @@ export function ViewMap() {
 
             <Polygon positions={coordinates} pathOptions={{ color: "blue" }} />
 
-
-
             {users && users.map((user) => {
               return (
                 <Marker key={user[0]} position={user}>
                 </Marker>
-
               )
             })
-
             }
-
           </MapContainer>
 
           <div

@@ -73,8 +73,6 @@ function ShowSaved({ savedData }) {
             };
             const zoomLevel = localStorage.getItem(`ZoomLevelPolygon${data.id}`) - 1 || 12;
 
-
-
             return (
               <Link
                 key={data.id}

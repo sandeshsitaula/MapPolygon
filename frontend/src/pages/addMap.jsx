@@ -9,8 +9,8 @@ import "leaflet-draw/dist/leaflet.draw.css";
 import { Button, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import AxiosInstance from '../axiosInstance'
-delete L.Icon.Default.prototype._getIconUrl;
 
+delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl:
     "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/images/marker-icon.png",
@@ -28,8 +28,9 @@ export function AddMap() {
   const [users, setUsers] = useState(null)
   const [customers, setCustomers] = useState([]);
   const [polygonId, setPolygonId] = useState(-1)
+  const ZOOM_LEVEL = localStorage.getItem("AddzoomLevel") || 12;
 
-
+  /* Handle zoom Changes */
   useEffect(() => {
     const handleZoomChanged = () => {
       // Your code to run when the zoom level changes
@@ -37,28 +38,21 @@ export function AddMap() {
       if (map) {
         const zoomLevel = map.getZoom();
         localStorage.setItem("AddzoomLevel", zoomLevel);
-        console.log('polygon', polygonId);
-        if (polygonId !== -1) {
           localStorage.setItem(`ZoomLevelPolygon${polygonId}`, zoomLevel);
-        }
       }
     };
-
     // Assuming mapRef.current is your reference to the map object
     const map = mapRef.current;
-
     // Check if the map object is available
     if (map) {
       // Add an event listener for the zoomChanged event
       map.on('zoomend', handleZoomChanged);
-
       // Clean up the event listener when the component is unmounted
       return () => {
         map.off('zoomend', handleZoomChanged);
       };
     }
   }, [mapRef, polygonId]); // Include mapRef and polygonId in the dependency array
-
 
 
   // Function to handle 'beforeunload' event
@@ -69,10 +63,6 @@ export function AddMap() {
       localStorage.setItem("AddzoomLevel", zoomLevel);
     }
   };
-
-
-
-
   // Add 'beforeunload' event listener when the component mounts
   useEffect(() => {
     const unloadListener = (event) => {
@@ -80,20 +70,15 @@ export function AddMap() {
       // The following line is necessary for older browsers
       event.returnValue = "";
     };
-
     window.addEventListener("beforeunload", unloadListener);
-
     // Remove the event listener when the component unmounts
     return () => {
       window.removeEventListener("beforeunload", unloadListener);
     };
-  }, []); // Include polygonId in the dependency array
+  }, []);
 
 
-  const ZOOM_LEVEL = localStorage.getItem("AddzoomLevel") || 12;
-
-
-  //get all users
+  /* get all users  */
   useEffect(() => {
     async function getUsers() {
       try {
@@ -106,23 +91,17 @@ export function AddMap() {
     getUsers()
   }, [])
 
-
-
-
-  //for location searching
+  /*  for location searching  */
   const [searchValue, setSearchValue] = useState("");
   const handleSearchChange = (e) => {
     setSearchValue(e.target.value);
   };
-
-
 
   const handleSelect = async () => {
     try {
       const response = await fetch(
         `https://nominatim.openstreetmap.org/search?format=json&q=${searchValue}`
       );
-
       const data = await response.json();
       if (data.length > 0) {
         const { lat, lon } = data[0];
@@ -132,12 +111,16 @@ export function AddMap() {
       console.error("Error fetching location:", error);
     }
   };
+
+/* Using map ref to manually change the position in map */
   useEffect(() => {
     // Manually set the center of the map when the center state changes using useref
     if (mapRef.current && center) {
       mapRef.current.setView([center.lat, center.lng], ZOOM_LEVEL);
     }
   }, [center]);
+
+
 
   //for creating removing and editing handlers
   const _onCreate = (e) => {
@@ -198,12 +181,10 @@ export function AddMap() {
         "api/map/addPolygon/",
         MapLayers
       );
-      console.log(response)
       if (response.data.data) {
         setCustomers(response.data.data);
       }
       if (response.data.polygonId) {
-
         setPolygonId(response.data.polygonId)
       }
       alert(response.data.msg);
@@ -216,8 +197,6 @@ export function AddMap() {
     }
   };
 
-
-  //
   return (
     <>
       <MapContainer
