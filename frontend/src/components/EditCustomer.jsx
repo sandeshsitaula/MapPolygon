@@ -8,19 +8,19 @@ export function EditCustomer(props) {
 
   const navigate = useNavigate();
   const intialCustomerState = {
-    firstName: "",
-    lastName: "",
+    first_name: "",
+    last_name: "",
     email: "",
     country: "",
     city: "",
     state: "",
-    phoneNumber: "",
-    zipCode: "",
+    phone_number: "",
+    zip_code: "",
     address: "",
   };
   const [customer, setCustomer] = useState(intialCustomerState);
   const [loading, setLoading] = useState(false);
-
+  const [customerId,setCustomerId]=useState(-1)
 
   //get all the input changes
   function handleChange(e) {
@@ -34,10 +34,23 @@ export function EditCustomer(props) {
   useEffect(()=>{
       async function getUser(){
     const response=await AxiosInstance.get(`api/customer/getCustomer/${props.customerId}`)
-    console.log(response)
+    const data=response.data
+    setCustomer({
+      first_name:data.customer.first_name,
+      last_name:data.customer.last_name,
+      email:data.customer.email,
+      phone_number:data.customer.phone_number,
+      country: data.country,
+      zip_code:data.zip_code,
+    city: data.city,
+    state: data.state,
+    address: data.address,
+
+    })
     }
     getUser()
 },[])
+
   //handle submit send customer data
   async function handleSubmit() {
     if (loading) {
@@ -52,15 +65,25 @@ export function EditCustomer(props) {
     }
 
     try {
-      const response = await AxiosInstance.post(
-        "api/customer/editCustomer/",
+      const response = await AxiosInstance.put(
+        `api/customer/updateCustomer/${props.customerId}/`,
         customer
       );
       alert(response.data.message);
       setLoading(false);
-      setCustomer(intialCustomerState);
+      const data=response.data.data
+    setCustomer({
+      first_name:data.customer.first_name,
+      last_name:data.customer.last_name,
+      email:data.customer.email,
+      phone_number:data.customer.phone_number,
+      country: data.country,
+      zip_code:data.zip_code,
+    city: data.city,
+    state: data.state,
+    address: data.address
+    })
     } catch (error) {
-      console.log(error);
       alert(error.error);
       setCustomer(intialCustomerState);
       setLoading(false);
@@ -89,7 +112,7 @@ export function EditCustomer(props) {
         <Col sm={9} md={5}>
           <div style={{ backgroundColor: "white" }}>
             <h5 style={{ textAlign: "center", paddingBottom: "20px" }}>
-              Add New Customer
+              Edit Customer
             </h5>
             <Col
             >
@@ -99,23 +122,24 @@ export function EditCustomer(props) {
                   style={{ marginBottom: "15px" }}
                   onChange={handleChange}
                   type="text"
+                  disabled
                   name="email"
                   placeholder="Email"
                 />
                 <Form.Control
-                  value={customer.firstName}
+                  value={customer.first_name}
                   style={{ marginBottom: "15px" }}
                   onChange={handleChange}
                   type="text"
-                  name="firstName"
+                  name="first_name"
                   placeholder="First Name"
                 />
                 <Form.Control
-                  value={customer.lastName}
+                  value={customer.last_name}
                   style={{ marginBottom: "15px" }}
                   onChange={handleChange}
                   type="text"
-                  name="lastName"
+                  name="last_name"
                   placeholder="Last Name"
                 />
                 <Form.Control
@@ -151,19 +175,20 @@ export function EditCustomer(props) {
                   placeholder="Address"
                 />
                 <Form.Control
-                  value={customer.zipCode}
+                  value={customer.zip_code}
                   style={{ marginBottom: "15px" }}
                   onChange={handleChange}
                   type="text"
-                  name="zipCode"
+                  name="zip_code"
                   placeholder="Zip Code"
                 />
                 <Form.Control
-                  value={customer.phoneNumber}
+                  value={customer.phone_number}
                   style={{ marginBottom: "25px" }}
                   onChange={handleChange}
                   type="text"
-                  name="phoneNumber"
+                  name="phone_number"
+                  disabled
                   placeholder="Phone Number (eg:+977-90000000)"
                 />
                 <div style={{ textAlign: "center", marginBottom: "30px" }}>
@@ -173,7 +198,7 @@ export function EditCustomer(props) {
                     variant="outline-success"
                     onClick={handleSubmit}
                   >
-                    {loading ? "Loading" : "Submit Customer"}
+                    {loading ? "Loading" : "Edit Customer"}
                   </Button>
                   <Button
                     onClick={() => navigate("/")}

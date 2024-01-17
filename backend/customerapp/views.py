@@ -100,10 +100,11 @@ def GetAllCustomerLocation(request):
 
 
 @api_view(['GET'])
-def GetCustomer(request,id):
+def GetCustomer(request,customerId):
     try:
-        customer=Customer.objects.get(id=id)
-        serializer=CustomerSerializer(customer)
+        customer=Customer.objects.get(id=customerId)
+        serviceAddress=ServiceAddress.objects.filter(customer=customer).order_by('-id')[:1]
+        serializer=ServiceAddressSerializer(serviceAddress[0])
         return Response(serializer.data,status=200)
     except Exception as e:
         error=str(e)
@@ -111,23 +112,33 @@ def GetCustomer(request,id):
         return Response({'error':f"Unexpected error occured...{error}"},status=400)
 
 
-
 @api_view(['PUT'])
-def UpdateCustomer(request, id):
+def UpdateCustomer(request, customerId):
     try:
-        customer = Customer.objects.get(id=id)
-        serializer = CustomerSerializer(instance=customer, data=request.data)
+        data=json.loads(request.body)
+        customer = Customer.objects.get(id=customerId)
+        serviceAddress=ServiceAddress.objects.filter(customer=customer)
+        for service in serviceAddress:
+             for field in ServiceAddress._meta.fields:  # Iterate over model fields
+                field_name = field.name
+                if field_name in data:
+                    setattr(service, field_name, data[field_name])
+             service.save()
 
-        if serializer.is_valid():
-            serializer.save()
-            msg = {'msg': 'The user has been updated', 'data': serializer.data}
-            return Response(msg, status=200)
-        else:
-            return Response({'msg': 'Invalid data'}, status=400)
+        for field in Customer._meta.fields:
+            field_name=field.name
+            if field_name in data:
+                setattr(customer,field_name,data[field_name])
+
+        customer.save()
+        msg = {'message': 'The user has been updated','data':ServiceAddressSerializer(serviceAddress[0]).data}
+        return Response(msg, status=200)
+
+
 
     except Customer.DoesNotExist:
-        return Response({"msg": "No user found"}, status=404)
+        return Response({"message": "No user found"}, status=404)
 
     except Exception as e:
         print(f"An error occurred: {str(e)}")
-        return Response({"msg": "An error occurred while updating the user"}, status=500)
+        return Response({"error": "An error occurred while updating the user"}, status=500)

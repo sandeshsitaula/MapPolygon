@@ -3,6 +3,6 @@ from . import views
 urlpatterns=[
     path('addCustomer/',views.AddCustomer),
     path('getAllCustomerLocation/',views.GetAllCustomerLocation),
-    path('getCustomer/<int:id>/',views.GetCustomer),
-    path('updateCustomer/<int:id>/',views.UpdateCustomer),
+    path('getCustomer/<int:customerId>/',views.GetCustomer),
+    path('updateCustomer/<int:customerId>/',views.UpdateCustomer),
     ]
