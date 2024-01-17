@@ -1,7 +1,5 @@
 function CustomerList(props){
-    console.log('hell')
       const data=props.data
-      console.log(data)
     const customer=data.customer
     return(
            <div
@@ -31,7 +29,6 @@ function CustomerList(props){
 
 export function CustomerDetail(props){
     const data=props.customers
-    console.log(data)
     return(
         <>
             <h5
