@@ -8,25 +8,18 @@ from .models import ServiceArea
 from customerapp.models import Customer,ServiceAddress
 from customerapp.serializers import ServiceAddressSerializer
 
-# Create your views here.
-
 #For adding a new polygon
-
-
 @api_view(['POST'])
 def AddPolygon(request):
     try:
         data = json.loads(request.body)
-        listData=[]
+        listData=[]  #since multiple polygons may be there
 
         for item in data:
             latlngs = item['latlngs']
-
-            #must be greater than 3
             if len(latlngs) >= 3:
                 #required because Polygon from geos expects last coordinates to be same
                 latlngs.append(latlngs[0])
-
 
             # Create a list
             points = [Point(latlng['lng'], latlng['lat']) for latlng in latlngs]
@@ -34,7 +27,6 @@ def AddPolygon(request):
             # Create a LinearRing directly
             linear_ring = LinearRing(points)
             polygon_geometry = GeosPolygon(linear_ring)
-
             polygon_wkt = polygon_geometry.wkt
 
             # Check if there is an existing polygon with exactly the same coordinates
@@ -42,10 +34,7 @@ def AddPolygon(request):
 
             if existing_polygon:
                 print(f"Polygon with coordinates {latlngs} already exists.")
-                # Handle the case where a matching polygon is found
-                # You may want to do something specific in this case
-
-                existing_polygon.delete()
+                continue
 
             # If not found, create a new polygon
             newServiceArea = ServiceArea.objects.create(polygon=polygon_geometry)
@@ -72,9 +61,9 @@ def AddPolygon(request):
                     listData.append(ServiceAddressSerializer(newServiceAddress).data)
 
         if len(listData)==0:
-            return Response({'msg':'sucessfully added'})
+            return Response({'msg':'sucessfully added','polygonId':newServiceArea.id},status=200)
 
-        return Response({'msg': 'Successfully added', 'data': listData})
+        return Response({'msg': 'Successfully added','data':listData, 'polygonId': newServiceArea.id})
 
     except Exception as e:
         print(f"Error: {e}")
@@ -87,12 +76,11 @@ def AddPolygon(request):
 @api_view(['GET'])
 def GetAllPolygons(request):
     try:
-
         serviceArea=ServiceArea.objects.all().order_by('-id')
-
         serializer=ServiceAreaSerializer(serviceArea,many=True)
         data={'data':serializer.data}
         return Response(data,status=200)
+
     except Exception as e:
         error=str(e)
         print(error)
@@ -103,12 +91,11 @@ def GetAllPolygons(request):
 def GetPolygon(request,polygonId):
     try:
         polygon=ServiceArea.objects.get(id=polygonId)
-
         serviceAddress=ServiceAddress.objects.filter(service_area=polygon).order_by('-id')
+
         if len(serviceAddress)==0:
             serializer=ServiceAreaSerializer(polygon)
         else:
-
             serializer=ServiceAddressSerializer(serviceAddress,many=True)
 
         data={'data':serializer.data}

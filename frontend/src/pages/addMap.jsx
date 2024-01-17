@@ -1,32 +1,52 @@
 import React, { useState, useEffect } from "react";
 import L from "leaflet";
-import { MapContainer, TileLayer, FeatureGroup } from "react-leaflet";
+import { MapContainer, TileLayer, FeatureGroup, Marker } from "react-leaflet";
 import { EditControl } from "react-leaflet-draw";
-import { Icon } from "leaflet";
 import { useRef } from "react";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
-import axios from "axios";
 import { Button, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import AxiosInstance from '../axiosInstance'
+import {CustomerDetail} from '../components/customerDetail'
 
-delete L.Icon.Default.prototype._getIconUrl;
 
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/images/marker-icon.png",
-  iconUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/images/marker-icon.png",
-  shadowUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/images/marker-shadow.png",
-});
+
 
 export function AddMap() {
   const [center, setCenter] = useState({ lat: 51.505, lng: -0.09 });
   const [MapLayers, setMapLayers] = useState([]);
   const mapRef = useRef();
   const navigate = useNavigate();
+  const [users, setUsers] = useState(null)
   const [customers, setCustomers] = useState([]);
+  const [polygonId, setPolygonId] = useState(-1)
+  const ZOOM_LEVEL = localStorage.getItem("AddzoomLevel") || 12;
+
+  /* Handle zoom Changes */
+  useEffect(() => {
+    const handleZoomChanged = () => {
+      // Your code to run when the zoom level changes
+      const map = mapRef.current;
+      if (map) {
+        const zoomLevel = map.getZoom();
+        localStorage.setItem("AddzoomLevel", zoomLevel);
+          localStorage.setItem(`ZoomLevelPolygon${polygonId}`, zoomLevel);
+      }
+    };
+    // Assuming mapRef.current is your reference to the map object
+    const map = mapRef.current;
+    // Check if the map object is available
+    if (map) {
+      // Add an event listener for the zoomChanged event
+      map.on('zoomend', handleZoomChanged);
+      // Clean up the event listener when the component is unmounted
+      return () => {
+        map.off('zoomend', handleZoomChanged);
+      };
+    }
+  }, [mapRef, polygonId]); // Include mapRef and polygonId in the dependency array
+
 
   // Function to handle 'beforeunload' event
   const handleBeforeUnload = () => {
@@ -36,20 +56,35 @@ export function AddMap() {
       localStorage.setItem("AddzoomLevel", zoomLevel);
     }
   };
-
   // Add 'beforeunload' event listener when the component mounts
   useEffect(() => {
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
+    const unloadListener = (event) => {
+      handleBeforeUnload();
+      // The following line is necessary for older browsers
+      event.returnValue = "";
+    };
+    window.addEventListener("beforeunload", unloadListener);
     // Remove the event listener when the component unmounts
     return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener("beforeunload", unloadListener);
     };
-  }, []); // Empty dependency array to run this effect once when the component mounts
+  }, []);
 
-  const ZOOM_LEVEL = localStorage.getItem("AddzoomLevel") || 12;
 
-  //for location searching
+  /* get all users  */
+  useEffect(() => {
+    async function getUsers() {
+      try {
+        const response = await AxiosInstance.get('api/customer/getAllCustomerLocation/')
+        setUsers(response.data.data)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    getUsers()
+  }, [])
+
+  /*  for location searching  */
   const [searchValue, setSearchValue] = useState("");
   const handleSearchChange = (e) => {
     setSearchValue(e.target.value);
@@ -60,7 +95,6 @@ export function AddMap() {
       const response = await fetch(
         `https://nominatim.openstreetmap.org/search?format=json&q=${searchValue}`
       );
-
       const data = await response.json();
       if (data.length > 0) {
         const { lat, lon } = data[0];
@@ -70,12 +104,16 @@ export function AddMap() {
       console.error("Error fetching location:", error);
     }
   };
+
+/* Using map ref to manually change the position in map */
   useEffect(() => {
     // Manually set the center of the map when the center state changes using useref
     if (mapRef.current && center) {
       mapRef.current.setView([center.lat, center.lng], ZOOM_LEVEL);
     }
   }, [center]);
+
+
 
   //for creating removing and editing handlers
   const _onCreate = (e) => {
@@ -132,20 +170,26 @@ export function AddMap() {
       return;
     }
     try {
-      const response = await axios.post(
-        "http://localhost:8000/api/map/addPolygon/",
+      const response = await AxiosInstance.post(
+        "api/map/addPolygon/",
         MapLayers
       );
       if (response.data.data) {
         setCustomers(response.data.data);
       }
+      if (response.data.polygonId) {
+        setPolygonId(response.data.polygonId)
+      }
       alert(response.data.msg);
+
+      const map = mapRef.current;
+      const zoomLevel = map.getZoom()
+      localStorage.setItem(`ZoomLevelPolygon${response.data.polygonId}`, zoomLevel);
     } catch (error) {
       console.log(error);
     }
   };
 
-  //
   return (
     <>
       <MapContainer
@@ -171,11 +215,17 @@ export function AddMap() {
             }}
           />
         </FeatureGroup>
-
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
+        {users && users.map((user) => {
+          return (
+            <Marker key={user[0]} position={user}>
+            </Marker>
+          )
+        })
+        }
       </MapContainer>
 
       <div
@@ -214,54 +264,8 @@ export function AddMap() {
       </div>
 
       {customers.length > 0 && (
-        <h5
-          style={{
-            color: "white",
-            paddingBottom: "0px",
-            margin: "0",
-            backgroundColor: "#242424",
-          }}
-        >
-          All Users Within This Area:{" "}
-        </h5>
-      )}
-      <div
-        style={{
-          display: "flex",
-          paddingTop: "20px",
-          backgroundColor: "#242424",
-          marginBottom: "20px",
-          flexWrap: "wrap",
-        }}
-      >
-        {customers.map((cust) => {
-          const customer = cust.customer;
-          return (
-            <div
-              key={customer.id}
-              style={{
-                backgroundColor: "white",
-                marginLeft: "20px",
-                borderRadius: "10px",
-                padding: "20px",
-                marginTop: "20px",
-                width: "300px",
-              }}
-            >
-              <h5>
-                FullName:{customer.first_name} {customer.last_name}
-              </h5>
-              <h5>Email:{customer.email}</h5>
-              <h5>PhoneNumber:{customer.phone_number}</h5>
-              <h5>Country:{cust.country}</h5>
-              <h5>State:{cust.state}</h5>
-              <h5>City:{cust.city}</h5>
-              <h5>Address:{cust.address}</h5>
-              <h5>ZipCode:{cust.zip_code}</h5>
-            </div>
-          );
-        })}
-      </div>
+        <CustomerDetail customers={customers} />
+)}
     </>
   );
 }

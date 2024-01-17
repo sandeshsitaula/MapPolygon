@@ -4,37 +4,48 @@ import { useParams, useNavigate } from "react-router-dom";
 import L from "leaflet";
 import { MapContainer, TileLayer, Polygon, Marker } from "react-leaflet";
 import { Button } from "react-bootstrap";
+import AxiosInstance from '../axiosInstance'
+import {CustomerDetail} from '../components/customerDetail'
 
 export function ViewMap() {
+
   const navigate = useNavigate();
   const { id } = useParams();
   const mapRef = useRef();
   const [coordinates, setCoordinates] = useState([]);
   const [center, setCenter] = useState({ lat: 51.505, lng: -0.09 });
   const [data, setData] = useState([]);
+  const [users, setUsers] = useState(null)
 
-  // Function to handle 'beforeunload' event
-  const handleBeforeUnload = () => {
-    const map = mapRef.current;
-    if (map) {
-      const zoomLevel = map.getZoom();
-      localStorage.setItem("zoomLevel", zoomLevel);
-    }
-  };
-
-  // Add 'beforeunload' event listener when the component mounts
   useEffect(() => {
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    // Remove the event listener when the component unmounts
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
+    const handleZoomChanged = () => {
+      // Your code to run when the zoom level changes
+      const map = mapRef.current;
+      if (map) {
+        const zoomLevel = map.getZoom();
+        localStorage.setItem("AddzoomLevel", zoomLevel);
+        localStorage.setItem(`ZoomLevelPolygon${id}`, zoomLevel);
+      }
     };
-  }, []); // Empty dependency array to run this effect once when the component mounts
 
-  const ZOOM_LEVEL = localStorage.getItem("zoomLevel") || 12;
+    // Assuming mapRef.current is your reference to the map object
+    const map = mapRef.current;
+    // Check if the map object is available
+    if (map) {
+      // Add an event listener for the zoomChanged event
+      map.on('zoomend', handleZoomChanged);
+      // Clean up the event listener when the component is unmounted
+      return () => {
+        map.off('zoomend', handleZoomChanged);
+      };
+    }
+  }, [center]); // Include mapRef and polygonId in the dependency array
+
+
+  const ZOOM_LEVEL = localStorage.getItem(`ZoomLevelPolygon${id}`) || 12;
 
   //delete
+
   const handleDelete = async () => {
     const response = await axios.get(
       `http://localhost:8000/api/map/deletePolygon/${id}/`
@@ -42,6 +53,8 @@ export function ViewMap() {
     navigate("/");
     alert(response.data.message);
   };
+
+
   useEffect(() => {
     async function getData() {
       try {
@@ -73,10 +86,12 @@ export function ViewMap() {
         const polygonCoordinates = points.map((point) => [point[1], point[0]]);
 
         setCoordinates(polygonCoordinates);
+        const averageLat = polygonCoordinates.reduce((sum, coord) => sum + coord[0], 0) / polygonCoordinates.length;
+        const averageLng = polygonCoordinates.reduce((sum, coord) => sum + coord[1], 0) / polygonCoordinates.length;
         if (polygonCoordinates.length > 0) {
           setCenter({
-            lat: polygonCoordinates[0][0],
-            lng: polygonCoordinates[0][1],
+            lat: averageLat,
+            lng: averageLng,
           });
         }
       } catch (error) {
@@ -88,6 +103,18 @@ export function ViewMap() {
     }
     getData();
   }, [id]);
+
+  useEffect(() => {
+    async function getUsers() {
+      try {
+        const response = await AxiosInstance.get('api/customer/getAllCustomerLocation/')
+        setUsers(response.data.data)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    getUsers()
+  }, [])
 
   //for updating map
   useEffect(() => {
@@ -113,31 +140,14 @@ export function ViewMap() {
             />
 
             <Polygon positions={coordinates} pathOptions={{ color: "blue" }} />
-            {data.map((temp) => {
-              const location = temp.location;
-              const coordinatesString = location.substring(
-                17,
-                location.length - 2
-              );
-              // Split the coordinates into individual points
-              const points = coordinatesString.split(",").map((coord) =>
-                coord
-                  .trim()
-                  .split(/\s+/)
-                  .map((c) => parseFloat(c))
-              );
-              // Swap latitude and longitude for Leaflet
-              const userCoordinates = points.map((point) => [
-                point[1],
-                point[0],
-              ]);
 
+            {users && users.map((user) => {
               return (
-                <Marker key={temp.id} position={userCoordinates[0]}>
-                  {/* Customize the Marker as needed */}
+                <Marker key={user[0]} position={user}>
                 </Marker>
-              );
-            })}
+              )
+            })
+            }
           </MapContainer>
 
           <div
@@ -170,55 +180,8 @@ export function ViewMap() {
             </Button>
           </div>
 
-          {data.length > 0 && (
-            <h5
-              style={{
-                color: "white",
-                paddingBottom: "0px",
-                margin: "0",
-                backgroundColor: "#242424",
-              }}
-            >
-              All Users Within This Area:{" "}
-            </h5>
-          )}
-          <div
-            style={{
-              display: "flex",
-              paddingTop: "20px",
-              backgroundColor: "#242424",
-              marginBottom: "20px",
-              flexWrap: "wrap",
-            }}
-          >
-            {data.map((customers) => {
-              const customer = customers.customer;
-              return (
-                <div
-                  key={customer.id}
-                  style={{
-                    backgroundColor: "white",
-                    marginLeft: "20px",
-                    borderRadius: "10px",
-                    padding: "20px",
-                    marginTop: "20px",
-                    width: "300px",
-                  }}
-                >
-                  <h5>
-                    FullName:{customer.first_name} {customer.last_name}
-                  </h5>
-                  <h5>Email:{customer.email}</h5>
-                  <h5>PhoneNumber:{customer.phone_number}</h5>
-                  <h5>Country:{customers.country}</h5>
-                  <h5>State:{customers.state}</h5>
-                  <h5>City:{customers.city}</h5>
-                  <h5>Address:{customers.address}</h5>
-                  <h5>ZipCode:{customers.zip_code}</h5>
-                </div>
-              );
-            })}
-          </div>
+            {data.length>0&& <CustomerDetail customers={data} />}
+
         </>
       ) : (
         "none"

@@ -1,11 +1,10 @@
-import axios from "axios";
 import { Form, Button, Col } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import AxiosInstance from "../axiosInstance";
 import { useNavigate } from "react-router-dom";
 export function AddCustomer() {
-  const navigate = useNavigate();
 
+  const navigate = useNavigate();
   const intialCustomerState = {
     firstName: "",
     lastName: "",
@@ -18,8 +17,8 @@ export function AddCustomer() {
     address: "",
   };
   const [customer, setCustomer] = useState(intialCustomerState);
-
   const [loading, setLoading] = useState(false);
+
 
   //get all the input changes
   function handleChange(e) {
@@ -29,6 +28,7 @@ export function AddCustomer() {
       [name]: value,
     }));
   }
+
   //handle submit send customer data
   async function handleSubmit() {
     if (loading) {
@@ -41,13 +41,13 @@ export function AddCustomer() {
       setLoading(false);
       return;
     }
+
     try {
       const response = await AxiosInstance.post(
         "api/customer/addCustomer/",
         customer
       );
       alert(response.data.message);
-
       setLoading(false);
       setCustomer(intialCustomerState);
     } catch (error) {
