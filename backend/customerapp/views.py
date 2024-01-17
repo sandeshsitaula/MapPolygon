@@ -95,3 +95,39 @@ def GetAllCustomerLocation(request):
        error=str(e)
        print(error)
        return Response({'error':f"Unexpected error occured ...{error}"},status=400)
+
+
+
+
+@api_view(['GET'])
+def GetCustomer(request,id):
+    try:
+        customer=Customer.objects.get(id=id)
+        serializer=CustomerSerializer(customer)
+        return Response(serializer.data,status=200)
+    except Exception as e:
+        error=str(e)
+        print(error)
+        return Response({'error':f"Unexpected error occured...{error}"},status=400)
+
+
+
+@api_view(['PUT'])
+def UpdateCustomer(request, id):
+    try:
+        customer = Customer.objects.get(id=id)
+        serializer = CustomerSerializer(instance=customer, data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            msg = {'msg': 'The user has been updated', 'data': serializer.data}
+            return Response(msg, status=200)
+        else:
+            return Response({'msg': 'Invalid data'}, status=400)
+
+    except Customer.DoesNotExist:
+        return Response({"msg": "No user found"}, status=404)
+
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        return Response({"msg": "An error occurred while updating the user"}, status=500)
