@@ -7,17 +7,19 @@ import { AddMap } from "./pages/addMap";
 import { AddCustomer } from "./pages/addCustomer";
 import { ViewMap } from "./pages/viewMap";
 import { Home } from "./pages/home";
+import Service from "./services/Service";
 function App() {
   return (
     <>
-      <Router>
+    <Service/>
+      {/* <Router>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/addMap" element={<AddMap />} />
           <Route path="/addCustomer" element={<AddCustomer />} />
           <Route path="/viewMap/:id" element={<ViewMap />} />
         </Routes>
-      </Router>
+      </Router> */}
     </>
   );
 }
