@@ -6,16 +6,17 @@ import { AddMap } from "./pages/addMap";
 import { ViewMap } from "./pages/viewMap";
 import { Home } from "./pages/home";
 import {MainLayout} from './pages/layout.jsx'
+
 function App() {
   return (
     <>
-      <Router>
+      {<Router>
         <Routes>
           <Route path="/" element={<MainLayout><Home /></MainLayout>} />
           <Route path="/addMap" element={<MainLayout><AddMap /></MainLayout>} />
           <Route path="/viewMap/:id" element={<MainLayout><ViewMap /></MainLayout>} />
         </Routes>
-      </Router>
+      </Router> }
     </>
   );
 }
