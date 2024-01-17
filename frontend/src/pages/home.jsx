@@ -8,7 +8,10 @@ import AxiosInstance from "../axiosInstance";
 
 function AddNew() {
   return (
+
+
     <div style={{ textAlign: "center", marginTop: "2rem" }}>
+
       <Link to="/addMap">
         <Button style={{ color: "white" }} size="lg" variant="outline-primary">
           Add New Data

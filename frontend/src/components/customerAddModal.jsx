@@ -1,8 +1,10 @@
 import { Form, Button, Col } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import AxiosInstance from "../axiosInstance";
+import { Row, Modal } from "react-bootstrap";
+
 import { useNavigate } from "react-router-dom";
-export function AddCustomer() {
+export function AddCustomer(props) {
 
   const navigate = useNavigate();
   const intialCustomerState = {
@@ -57,14 +59,22 @@ export function AddCustomer() {
       setLoading(false);
     }
   }
+
+    const handleClose = () => {props.setModal(false)};
+
   return (
     <>
+      <Modal show={true}  onHide={handleClose} size="xl" centered   backdrop="static" keyboard={false}>
+        <Modal.Header closeButton>
+
+        </Modal.Header>
+        <Modal.Body style={{ padding: "0px" }}>
+
       <div
         style={{
-          backgroundColor: "#2e8a99",
           display: "flex",
-          height: "100vh",
-          paddingTop: "5rem",
+          paddingTop: "1rem",
+          paddingBottom:'1rem',
           justifyContent: "center",
         }}
       >
@@ -74,11 +84,8 @@ export function AddCustomer() {
               Add New Customer
             </h5>
             <Col
-              sm={9}
-              md={12}
-              style={{ display: "flex", justifyContent: "center" }}
             >
-              <Form style={{ width: "80%" }}>
+              <Form style={{  }}>
                 <Form.Control
                   value={customer.email}
                   style={{ marginBottom: "15px" }}
@@ -173,6 +180,8 @@ export function AddCustomer() {
           </div>
         </Col>
       </div>
+      </Modal.Body>
+      </Modal>
     </>
   );
 }
