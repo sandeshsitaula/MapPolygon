@@ -1,0 +1,27 @@
+.main{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #d9d9d9;
+    padding: 1px;
+    /* border: 2px solid black; */
+    /* margin:0 10px; */
+}
+.left{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    margin-left:10px ;
+}
+.right{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    /* padding: 20px; */
+    margin-right:20px
+}
+.emoji{
+    font-size: 30px;
+    font-weight: 600;
+}

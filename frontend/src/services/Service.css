@@ -1,10 +1,19 @@
-.container{
+.service{
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding:20px;
-    /* border: 2px solid black; */
+    background-color: #6d6d6d;
+    color: black;
+    width: 80%;
+    margin: 0 auto;
+   
 
+}
+.container h3{
+  
+   
+    color: white;
 }
 
 .left_container{
@@ -12,17 +21,26 @@
     justify-content: space-between;
     align-items: center;
     gap: 8px;
+    margin-right: 14rem;
+    
     /* border:10px solid black; */
 }
 .btn1{
     padding: 8px;
     margin-left:20px ;
+    background-color: white;
+    color: black;
+    outline: none;
+    border: 2px solid black;
 
 }
 
 .btn2{
     padding: 8px;
     /* margin-left:20px ; */
-
+background-color: white;
+color: black;
+outline: none;
+    border: 2px solid black;
 }
 
