@@ -6,7 +6,7 @@ import { MapContainer, TileLayer, Polygon, Marker } from "react-leaflet";
 import { Button } from "react-bootstrap";
 import AxiosInstance from '../axiosInstance'
 import {CustomerDetail} from '../components/customerDetail'
-
+/*
 export function ViewMap() {
 
   const navigate = useNavigate();
@@ -188,4 +188,11 @@ export function ViewMap() {
       )}
     </>
   );
+}
+*/
+
+export function AlertInterface(){
+  return(
+    <div>hello</div>
+  )
 }
