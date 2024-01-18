@@ -12,7 +12,7 @@ import {CustomerDetail} from '../components/customerDetail'
 
 
 
-
+/*
 export function AddMap() {
   const [center, setCenter] = useState({ lat: 51.505, lng: -0.09 });
   const [MapLayers, setMapLayers] = useState([]);
@@ -23,7 +23,6 @@ export function AddMap() {
   const [polygonId, setPolygonId] = useState(-1)
   const ZOOM_LEVEL = localStorage.getItem("AddzoomLevel") || 12;
 
-  /* Handle zoom Changes */
   useEffect(() => {
     const handleZoomChanged = () => {
       // Your code to run when the zoom level changes
@@ -71,7 +70,6 @@ export function AddMap() {
   }, []);
 
 
-  /* get all users  */
   useEffect(() => {
     async function getUsers() {
       try {
@@ -84,7 +82,6 @@ export function AddMap() {
     getUsers()
   }, [])
 
-  /*  for location searching  */
   const [searchValue, setSearchValue] = useState("");
   const handleSearchChange = (e) => {
     setSearchValue(e.target.value);
@@ -105,7 +102,7 @@ export function AddMap() {
     }
   };
 
-/* Using map ref to manually change the position in map */
+// Using map ref to manually change the position in map 
   useEffect(() => {
     // Manually set the center of the map when the center state changes using useref
     if (mapRef.current && center) {
@@ -268,4 +265,11 @@ export function AddMap() {
 )}
     </>
   );
+}
+*/
+
+export function ServiceAreaInterface(){
+return(
+  <div>hello</div>
+)
 }

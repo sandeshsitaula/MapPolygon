@@ -2,21 +2,26 @@ import { useEffect } from "react";
 import axios from "axios";
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { AddMap } from "./pages/addMap";
-import { ViewMap } from "./pages/viewMap";
-import { Home } from "./pages/home";
+import { ServiceAreaInterface } from "./pages/serviceAreaInterface";
+import { AlertInterface } from "./pages/alertInterface";
+import { CustomerInterface } from "./pages/customerInterface";
 import {MainLayout} from './pages/layout.jsx'
+
+import {UserInfo} from "./components/UserInfo";
+
+
 function App() {
   return (
     <>
-      {<Router>
+
+      { <Router>
         <Routes>
-          <Route path="/" element={<MainLayout><Home />
-</MainLayout>} />
-          <Route path="/addMap" element={<MainLayout><AddMap /></MainLayout>} />
-          <Route path="/viewMap/:id" element={<MainLayout><ViewMap /></MainLayout>} />
+
+          <Route path="/customerInterface" element={<MainLayout><CustomerInterface /></MainLayout>} />
+          <Route path="/alertInterface" element={<MainLayout><AlertInterface /></MainLayout>} />
+          <Route path="/serviceAreaInterface/:id" element={<MainLayout><ServiceAreaInterface /></MainLayout>} />
         </Routes>
-      </Router> }
+      </Router>  }
     </>
   );
 }
