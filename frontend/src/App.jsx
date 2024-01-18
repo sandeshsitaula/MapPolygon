@@ -11,16 +11,14 @@ import {UserInfo} from "./components/UserInfo";
 function App() {
   return (
     <>
-    <UserInfo/>
-    <UserInfo />
-   
-      {/* <Router>
+
+      { <Router>
         <Routes>
           <Route path="/" element={<MainLayout><Home /></MainLayout>} />
           <Route path="/addMap" element={<MainLayout><AddMap /></MainLayout>} />
           <Route path="/viewMap/:id" element={<MainLayout><ViewMap /></MainLayout>} />
         </Routes>
-      </Router>  */}
+      </Router>  }
     </>
   );
 }
