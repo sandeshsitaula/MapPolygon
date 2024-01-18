@@ -16,7 +16,6 @@ function App() {
 
       { <Router>
         <Routes>
-
           <Route path="/customerInterface" element={<MainLayout><CustomerInterface /></MainLayout>} />
           <Route path="/alertInterface" element={<MainLayout><AlertInterface /></MainLayout>} />
           <Route path="/serviceAreaInterface/:id" element={<MainLayout><ServiceAreaInterface /></MainLayout>} />

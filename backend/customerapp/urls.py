@@ -5,4 +5,5 @@ urlpatterns=[
     path('getAllCustomerLocation/',views.GetAllCustomerLocation),
     path('getCustomer/<int:customerId>/',views.GetCustomer),
     path('updateCustomer/<int:customerId>/',views.UpdateCustomer),
+    path('getAllCustomer/',views.GetAllCustomer),
     ]

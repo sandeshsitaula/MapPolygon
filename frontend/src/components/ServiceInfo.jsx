@@ -50,7 +50,7 @@ function ServiceList(props) {
   );
 }
 
-export const FilterHeader = () => {
+export const FilterServiceHeader = () => {
   return (
     <div
       style={{
@@ -83,7 +83,6 @@ export const FilterHeader = () => {
           padding: "10px 60px",
           marginRight: "2rem",
         }}
-        onClick={toggleServiceList}
       >
         Search
       </Button>

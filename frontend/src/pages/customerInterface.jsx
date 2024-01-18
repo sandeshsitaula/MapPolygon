@@ -141,10 +141,35 @@ import AxiosInstance from "../axiosInstance";
 //     </>
 //   );
 // }
-
+import {UserInfo,FilterUserHeader} from '../components/UserInfo'
 
 export function CustomerInterface(){
+  const [customerData,setCustomerData]=useState(null)
+  const [customerUpdater,setCustomerUpdater]=useState(false)
+  function customerUpdaterToggler(){
+    setCustomerUpdater(!customerUpdater)
+  }
+  useEffect(()=>{
+   async function getAllCustomers(){
+     try{
+    const response=await AxiosInstance.get('api/customer/getAllCustomer/')
+    setCustomerData(response.data.data)
+     }
+     catch(error){
+       console.log(error)
+       alert(error.data.error)
+    }
+  }
+  getAllCustomers()
+  },[customerUpdater])
   return(
-    <div>hello</div>
+    <>
+    <div style={{height:'100vh'}}>
+    <FilterUserHeader />
+    {customerData && customerData.map((customer)=>(
+    <UserInfo key={customer.id} customerUpdaterToggler={customerUpdaterToggler} data={customer}/>
+    ))}
+    </div>
+    </>
   )
 }
