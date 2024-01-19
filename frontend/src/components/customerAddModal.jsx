@@ -4,7 +4,7 @@ import AxiosInstance from "../axiosInstance";
 import { Row, Modal } from "react-bootstrap";
 
 import { useNavigate } from "react-router-dom";
-export function AddCustomer(props) {
+export function CustomerAddModal(props) {
 
   const navigate = useNavigate();
   const intialCustomerState = {
@@ -52,6 +52,7 @@ export function AddCustomer(props) {
       alert(response.data.message);
       setLoading(false);
       setCustomer(intialCustomerState);
+      props.customerUpdater()
     } catch (error) {
       console.log(error);
       alert(error.error);

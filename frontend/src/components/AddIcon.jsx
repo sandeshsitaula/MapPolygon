@@ -5,7 +5,7 @@ return(
      <>
 
         <IoIosAddCircle
-        onClick={()=>props.setModal(true)}style={{fontSize:'80px',color:'skyblue',cursor:'pointer'}}/>
+        onClick={()=>props.setTextContent(true)}style={{fontSize:'80px',color:'skyblue',cursor:'pointer'}}/>
     </>
 
 )

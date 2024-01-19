@@ -142,12 +142,20 @@ import AxiosInstance from "../axiosInstance";
 //   );
 // }
 import {UserInfo,FilterUserHeader} from '../components/UserInfo'
+import {AddIcon} from '../components/AddIcon';
+import {CustomerAddModal} from '../components/customerAddModal'
 
 export function CustomerInterface(){
   const [customerData,setCustomerData]=useState(null)
   const [customerUpdater,setCustomerUpdater]=useState(false)
+  const [textContent,setTextContent]=useState(false)
+  const [showCustomerModal,setShowCustomerModal]=useState(true)
+
   function customerUpdaterToggler(){
     setCustomerUpdater(!customerUpdater)
+  }
+  function toggleTextContent(){
+    setTextContent((prev)=>!prev)
   }
   useEffect(()=>{
    async function getAllCustomers(){
@@ -164,12 +172,31 @@ export function CustomerInterface(){
   },[customerUpdater])
   return(
     <>
-    <div style={{height:'100vh'}}>
+
+    {showCustomerModal&&<CustomerAddModal customerUpdater={customerUpdaterToggler} setModal={setShowCustomerModal}/>}
+
+    <div style={{height:'100vh',position:'relative'}}>
     <FilterUserHeader />
     {customerData && customerData.map((customer)=>(
     <UserInfo key={customer.id} customerUpdaterToggler={customerUpdaterToggler} data={customer}/>
     ))}
+
+    <div>
     </div>
+
+   {textContent && <div style={{position:'absolute',top:'60%',right:'5%'}}>
+   <div style={{backgroundColor:'white',color:'black',padding:'20px'}}>
+   <div onClick={()=>setShowCustomerModal(true)} style={{marginBottom:'10px',cursor:'pointer'}}>Add Customer</div>
+   <div  style={{cursor:'pointer'}}>Create Alert</div>
+    </div>
+      <AddIcon  setTextContent={toggleTextContent}/>
+    </div> }
+    {!textContent &&<div style={{position:'absolute',top:'70%',right:'10%'}}>
+      <AddIcon setTextContent={toggleTextContent} />
+      </div>
+    }
+    </div>
+
     </>
   )
 }
