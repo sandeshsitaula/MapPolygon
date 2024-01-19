@@ -149,7 +149,7 @@ export function CustomerInterface(){
   const [customerData,setCustomerData]=useState(null)
   const [customerUpdater,setCustomerUpdater]=useState(false)
   const [textContent,setTextContent]=useState(false)
-  const [showCustomerModal,setShowCustomerModal]=useState(true)
+  const [showCustomerModal,setShowCustomerModal]=useState(false)
 
   function customerUpdaterToggler(){
     setCustomerUpdater(!customerUpdater)
