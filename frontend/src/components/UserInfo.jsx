@@ -100,7 +100,7 @@ export function UserInfo(props) {
           position: "relative",
         }}
       >
-       {isEditVisible&&<div style={{ backgroundColor:'white',padding:'20px',position: "absolute", top: "3rem", right: "0" }} onClick={()=>setEditCustomerModal(true)}>
+       {isEditVisible&&<div style={{ backgroundColor:'white',padding:'20px',position: "absolute", top: "3rem", right: "0",cursor:'pointer' }} onClick={()=>setEditCustomerModal(true)}>
           Edit Customer
         </div>}
         <div
@@ -134,7 +134,7 @@ export function UserInfo(props) {
         </div>
         <div style={{ paddingRight: "3rem" }}>
           <IoCallOutline style={{ fontSize: "2rem" }} />
-          <BsThreeDotsVertical onClick={()=>{setIsUserListVisible(true);toggleEditCustomer()} }style={{ fontSize: "2rem" }} />
+          <BsThreeDotsVertical onClick={()=>{setIsUserListVisible(true);toggleEditCustomer()} }style={{ fontSize: "2rem",cursor:'pointer' }} />
         </div>
       </div>
       {isUserListVisible && <UserList data={props.data}/>}
