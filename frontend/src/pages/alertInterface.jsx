@@ -7,6 +7,8 @@ import { Button } from "react-bootstrap";
 import AxiosInstance from '../axiosInstance'
 import {CustomerDetail} from '../components/customerDetail'
 import {AddAlertModal} from '../components/AddAlertModal'
+import {AddIcon} from '../components/AddIcon'
+import {AlertInfo} from '../components/alertInfo'
 /*
 export function ViewMap() {
 
@@ -194,9 +196,34 @@ export function ViewMap() {
 */
 
 export function AlertInterface(){
+  const [modalShow,setModalShow]=useState(false)
+  const [textContent,setTextContent]=useState(false)
+  const [alertUpdater,setAlertUpdater]=useState(false)
+
+    function toggleAlertUpdater(){
+    setAlertUpdater(!alertUpdater)
+  }
+
+  function toggleTextContent(){
+    setTextContent((prev)=>!prev)
+  }
   return(
     <>
-    <AddAlertModal />
+    {modalShow&&
+    <AddAlertModal alertUpdater={toggleAlertUpdater} setModal={setModalShow}/>}
+
+
+
+  {textContent && <div style={{position:'absolute',top:'60%',right:'5%'}}>
+   <div style={{backgroundColor:'white',color:'black',padding:'20px'}}>
+   <div onClick={()=>setModalShow(true)} style={{cursor:'pointer'}}>Create Alert</div>
+    </div>
+      <AddIcon  setTextContent={toggleTextContent}/>
+    </div> }
+    {!textContent &&<div style={{position:'absolute',top:'70%',right:'10%'}}>
+      <AddIcon setTextContent={toggleTextContent} />
+      </div>
+    }
     </>
   )
 }

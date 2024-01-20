@@ -56,6 +56,7 @@ export function AddAlertModal(props) {
         alert_service_area:updatedCheckboxes
     }));
 }
+
   //handle submit send customer data
   async function handleSubmit() {
     if (loading) {
@@ -74,16 +75,16 @@ export function AddAlertModal(props) {
         "api/alert/addAlert/",
         alertData
       );
-      console.log(response)
       alert(response.data.message);
       setLoading(false);
-     setAlert(intialCustomerState);
-//       props.customerUpdater()
+     setAlert(intialAlertState);
+      props.alertUpdater()
     } catch (error) {
       console.log(error);
-      alert(error.response.data.error)
-      setAlert(intialCustomerState);
+
       setLoading(false);
+      alert(error.response.data.error)
+      setAlert(intialAlertState);
     }
   }
 

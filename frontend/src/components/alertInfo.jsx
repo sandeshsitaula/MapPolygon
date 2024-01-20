@@ -5,7 +5,7 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import { IoCallOutline } from "react-icons/io5";
 import { IoIosArrowUp } from "react-icons/io";
 
-function ServiceList(props) {
+function AlertList(props) {
   return (
     <div
       style={{
@@ -90,7 +90,7 @@ export const FilterServiceHeader = () => {
   );
 };
 
-export function ServiceInfo() {
+export function AlertInfo() {
   const [isServiceListVisible, setIsServiceListVisible] = useState(false);
 
   const toggleServiceList = () => {

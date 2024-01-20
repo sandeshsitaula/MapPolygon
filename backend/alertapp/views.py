@@ -20,9 +20,16 @@ def AddAlert(request):
         print(alert_name,message)
 
         alert_service_area=data.get('alert_service_area')
+
         print(alert_service_area)
         alert=AlertModel(alert_name=alert_name,message=message)
         alert.save()
+        for service_area_id in alert_service_area:
+            service_area=ServiceArea.objects.get(id=service_area_id)
+            alert_service=AlertServiceModel(alert=alert,service_area=service_area)
+            alert_service.save()
+
+
         return Response({'message':"Alert has been successfully saved"},status=201)
 
 
@@ -30,3 +37,5 @@ def AddAlert(request):
         error=str(e)
         print(error)
         return Response({'error':f"Unexpected error occured f{error}"},status=400)
+
+
