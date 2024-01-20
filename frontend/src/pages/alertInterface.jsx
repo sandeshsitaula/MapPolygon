@@ -6,6 +6,7 @@ import { MapContainer, TileLayer, Polygon, Marker } from "react-leaflet";
 import { Button } from "react-bootstrap";
 import AxiosInstance from '../axiosInstance'
 import {CustomerDetail} from '../components/customerDetail'
+import {AddAlertModal} from '../components/AddAlertModal'
 /*
 export function ViewMap() {
 
@@ -186,6 +187,7 @@ export function ViewMap() {
       ) : (
         "none"
       )}
+
     </>
   );
 }
@@ -193,6 +195,8 @@ export function ViewMap() {
 
 export function AlertInterface(){
   return(
-    <div>hello</div>
+    <>
+    <AddAlertModal />
+    </>
   )
 }

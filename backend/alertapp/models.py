@@ -1,8 +1,8 @@
 from django.db import models
-from customerapp.models import  ServiceAddress
+from Mapapp.models import  ServiceArea
 
 class AlertModel(models.Model):
-    alert_name=models.CharField(max_length=200)
+    alert_name=models.CharField(max_length=200,unique=True)
     statusChoices=[
         ('ACTIVE','Active'),
          ('RESOLVED','Resolved'),
@@ -14,4 +14,4 @@ class AlertModel(models.Model):
 
 class AlertServiceModel(models.Model):
     alert=models.ForeignKey(AlertModel,on_delete=models.CASCADE)
-    service_address=models.ForeignKey(ServiceAddress,on_delete=models.CASCADE)
+    service_area=models.ForeignKey(ServiceArea,on_delete=models.CASCADE)

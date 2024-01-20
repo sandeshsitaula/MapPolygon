@@ -10,5 +10,19 @@ import requests
 import os
 
 # Create your views here.
-def AddAlert(reqeust):
-    pass
+@api_view(['POST'])
+def AddAlert(request):
+    try:
+        data=json.loads(request.body)
+        print(data)
+        alert_name=data.get('alert_name')
+        message=data.get('message')
+        alert=AlertModel(alert_name=alert_name,message=message)
+        alert.save()
+        return Response({'msg':"Alert has been successfully saved"},status=201)
+
+
+    except Exception as e:
+        error=str(e)
+        print(error)
+        return Response({'error':f"Unexpected error occured f{error}"},status=400)

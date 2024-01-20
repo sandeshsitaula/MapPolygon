@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import AlertModel,AlertServiceModel
-from customerapp.serializers import ServiceAddressSerializer
+from Mapapp.serializers import ServiceAreaSerializer
 
 class AlertModelSerializer(serializers.ModelSerializer):
     class Meta:
@@ -9,7 +9,7 @@ class AlertModelSerializer(serializers.ModelSerializer):
 
 
 class AlertServiceModelSerializer(serializers.ModelSerializer):
-    service_address=ServiceAddressSerializer()
+    service_area=ServiceAreaSerializer()
     class Meta:
         model=AlertServiceModel
         fields='__all__'
