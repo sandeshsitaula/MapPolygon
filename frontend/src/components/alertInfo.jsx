@@ -17,7 +17,7 @@ function AlertList(props) {
         justifyContent: "space-between",
       }}
     >
-      <div style={{ display:'flex',flexWrap:"wrap",alignItems:"center",paddingLeft: "2rem", color: "white" }}>
+      <div style={{ display: 'flex', flexWrap: "wrap", alignItems: "center", paddingLeft: "2rem", color: "white" }}>
         <p>{`Service Area: ${props.service_area.id}`}</p>
       </div>
       <div>
@@ -105,28 +105,30 @@ export function AlertInfo(props) {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-         
+
         }}
       >
-        <div style={{ display: "flex",  flexWrap:'wrap',
-          alignItems: "center",alignContent: "center" }}>
-        {isServiceListVisible? <RiArrowDropDownLine
+        <div style={{
+          display: "flex", flexWrap: 'wrap',
+          alignItems: "center", alignContent: "center"
+        }}>
+          {isServiceListVisible ? <RiArrowDropDownLine
             onClick={toggleServiceList}
-            style={{ fontSize: "3rem",marginRight:'1rem' ,cursor:'pointer' }}
-          />:
-          <IoIosArrowUp onClick={toggleServiceList}
-            style={{ fontSize: "2rem",marginRight:'1rem',cursor:'pointer'  }}/>}
-          <p style={{ fontSize: "1.3rem"}}>{props.alert.alert_name}</p>
+            style={{ fontSize: "3rem", marginRight: '1rem', cursor: 'pointer' }}
+          /> :
+            <IoIosArrowUp onClick={toggleServiceList}
+              style={{ fontSize: "2rem", marginRight: '1rem', cursor: 'pointer' }} />}
+          <p style={{ fontSize: "1.3rem" }}>{props.alert.alert_name}</p>
         </div>
-        <div style={{paddingRight:'3rem'}}>
+        <div style={{ paddingRight: '3rem' }}>
           <IoCallOutline style={{ fontSize: "2rem" }} />
           <BsThreeDotsVertical style={{ fontSize: "2rem" }} />
         </div>
       </div>
 
-      {isServiceListVisible && props.service_area &&props.service_area.map((service)=>{
+      {isServiceListVisible && props.service_area && props.service_area.map((service) => {
 
-        return(<AlertList service_area={service.service_area} key={service.id}/>)
+        return (<AlertList service_area={service.service_area} key={service.id} />)
       })}
     </>
   );

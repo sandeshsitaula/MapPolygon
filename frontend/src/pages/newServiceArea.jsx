@@ -8,7 +8,7 @@ import "leaflet-draw/dist/leaflet.draw.css";
 import { Button, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import AxiosInstance from '../axiosInstance'
-import {CustomerDetail} from '../components/customerDetail'
+import { CustomerDetail } from '../components/customerDetail'
 
 
 
@@ -30,7 +30,7 @@ export function AddNewServiceArea() {
       if (map) {
         const zoomLevel = map.getZoom();
         localStorage.setItem("AddzoomLevel", zoomLevel);
-          localStorage.setItem(`ZoomLevelPolygon${polygonId}`, zoomLevel);
+        localStorage.setItem(`ZoomLevelPolygon${polygonId}`, zoomLevel);
       }
     };
     // Assuming mapRef.current is your reference to the map object
@@ -102,7 +102,7 @@ export function AddNewServiceArea() {
     }
   };
 
-// Using map ref to manually change the position in map
+  // Using map ref to manually change the position in map
   useEffect(() => {
     // Manually set the center of the map when the center state changes using useref
     if (mapRef.current && center) {
@@ -231,7 +231,7 @@ export function AddNewServiceArea() {
           justifyContent: "space-around",
           backgroundColor: "#242424",
           paddingTop: "50px",
-          paddingBottom:'20px',
+          paddingBottom: '20px',
           textAlign: "center",
         }}
       >
@@ -263,7 +263,7 @@ export function AddNewServiceArea() {
 
       {customers.length > 0 && (
         <CustomerDetail customers={customers} />
-)}
+      )}
     </>
   );
 }
