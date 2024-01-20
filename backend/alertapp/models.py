@@ -1,6 +1,5 @@
 from django.db import models
 from customerapp.models import  ServiceAddress
-# Create your models here.
 
 class AlertModel(models.Model):
     alert_name=models.CharField(max_length=200)
