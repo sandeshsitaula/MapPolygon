@@ -12,9 +12,10 @@ export function AddAlertModal(props) {
     alert_message:'',
     alert_service_area:[]
   };
-  const [alert, setAlert] = useState(intialAlertState);
+  const [alertData, setAlert] = useState(intialAlertState);
   const [loading, setLoading] = useState(false);
   const [serviceArea,setServiceArea]=useState([])
+
  useEffect(()=>{
      async function getAllServiceArea(){
         try {
@@ -39,9 +40,9 @@ export function AddAlertModal(props) {
 
   function handleChangeCheckbox(value){
       console.log(value)
-    const updatedCheckboxes = [...(alert.alert_service_area)];
+    const updatedCheckboxes = [...(alertData.alert_service_area)];
 
-    if (alert.alert_service_area.includes(value)) {
+    if (alertData.alert_service_area.includes(value)) {
       // Remove the checkbox value if already present
       const index = updatedCheckboxes.indexOf(value);
       updatedCheckboxes.splice(index, 1);
@@ -70,17 +71,18 @@ export function AddAlertModal(props) {
 
     try {
       const response = await AxiosInstance.post(
-        "api/customer/addCustomer/",
-        customer
+        "api/alert/addAlert/",
+        alertData
       );
+      console.log(response)
       alert(response.data.message);
       setLoading(false);
-//      setAlert(intialCustomerState);
+     setAlert(intialCustomerState);
 //       props.customerUpdater()
     } catch (error) {
       console.log(error);
-      alert(error.error);
-//       setAlert(intialCustomerState);
+      alert(error.response.data.error)
+      setAlert(intialCustomerState);
       setLoading(false);
     }
   }
@@ -113,7 +115,7 @@ export function AddAlertModal(props) {
             >
               <Form style={{  }}>
                 <Form.Control
-                  value={alert.alert_name}
+                  value={alertData.alert_name}
                   style={{ marginBottom: "15px" }}
                   onChange={handleChange}
                   type="text"
@@ -121,7 +123,7 @@ export function AddAlertModal(props) {
                   placeholder="Alert Name"
                 />
                 <Form.Control
-                  value={alert.alert_message}
+                  value={alertData.alert_message}
                   style={{ marginBottom: "15px" }}
                   onChange={handleChange}
                   type="text"

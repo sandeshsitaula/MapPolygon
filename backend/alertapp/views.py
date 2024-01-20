@@ -16,10 +16,14 @@ def AddAlert(request):
         data=json.loads(request.body)
         print(data)
         alert_name=data.get('alert_name')
-        message=data.get('message')
+        message=data.get('alert_message')
+        print(alert_name,message)
+
+        alert_service_area=data.get('alert_service_area')
+        print(alert_service_area)
         alert=AlertModel(alert_name=alert_name,message=message)
         alert.save()
-        return Response({'msg':"Alert has been successfully saved"},status=201)
+        return Response({'message':"Alert has been successfully saved"},status=201)
 
 
     except Exception as e:
