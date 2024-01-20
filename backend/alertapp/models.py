@@ -8,6 +8,7 @@ class AlertModel(models.Model):
         ('ACTIVE','Active'),
          ('RESOLVED','Resolved'),
         ]
+    message=models.TextField(blank=True,null=True)
     status=models.CharField(max_length=10,choices=statusChoices,default="ACTIVE")
 
     created_at=models.DateTimeField(auto_now_add=True)
