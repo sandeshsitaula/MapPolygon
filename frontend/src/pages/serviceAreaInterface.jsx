@@ -102,7 +102,31 @@ export function ServiceAreaInterface(){
   const [serviceArea,setServiceArea]=useState(null)
   const [customers,setCustomer]=useState(null)
   const [center, setCenter] = useState({ lat: 51.505, lng: -0.09 });
-  const ZOOM_LEVEL=12
+  const ZOOM_LEVEL=localStorage.getItem('zoomLevelServiceArea')||12
+
+
+  useEffect(() => {
+    const handleZoomChanged = () => {
+      // Your code to run when the zoom level changes
+      const map = mapRef.current;
+      if (map) {
+        const zoomLevel = map.getZoom();
+        localStorage.setItem("zoomLevelServiceArea", zoomLevel);
+      }
+    };
+
+    // Assuming mapRef.current is your reference to the map object
+    const map = mapRef.current;
+    // Check if the map object is available
+    if (map) {
+      // Add an event listener for the zoomChanged event
+      map.on('zoomend', handleZoomChanged);
+      // Clean up the event listener when the component is unmounted
+      return () => {
+        map.off('zoomend', handleZoomChanged);
+      };
+    }
+  }, [serviceArea]); // Include mapRef and polygonId in the dependency array
 
 
 const parsePolygon = (polygon) => {
@@ -153,15 +177,12 @@ const parsePolygon = (polygon) => {
     getUsers()
   }, [])
 
-
 return(
   <>
-
-
           <MapContainer
             center={center}
             zoom={ZOOM_LEVEL}
-            style={{ height: "500px", width: "100%" }}
+            style={{height:'100vh', width: "100%" }}
             ref={mapRef}
           >
             <TileLayer
@@ -169,9 +190,9 @@ return(
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             />
             {serviceArea &&serviceArea.map((area)=>{
-
+              const coordinates=parsePolygon(area.polygon)
               return(
-            <Polygon positions={coordinates} pathOptions={{ color: "blue" }} />
+            <Polygon key={area.id} positions={coordinates} pathOptions={{ color: "blue" }} />
               )})}
 
 
