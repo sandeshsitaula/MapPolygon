@@ -18,7 +18,7 @@ function AlertList(props) {
       }}
     >
       <div style={{ display:'flex',flexWrap:"wrap",alignItems:"center",paddingLeft: "2rem", color: "white" }}>
-        <p>Service Area1</p>
+        <p>{`Service Area: ${props.service_area.id}`}</p>
       </div>
       <div>
         <Button
@@ -93,10 +93,10 @@ export const FilterAlertHeader = () => {
 export function AlertInfo(props) {
   const [isServiceListVisible, setIsServiceListVisible] = useState(false);
 
-  console.log(props.service_area)
   const toggleServiceList = () => {
     setIsServiceListVisible(!isServiceListVisible);
   };
+  console.log(props.service_area)
   return (
     <>
       <div
@@ -116,7 +116,7 @@ export function AlertInfo(props) {
           />:
           <IoIosArrowUp onClick={toggleServiceList}
             style={{ fontSize: "2rem",marginRight:'1rem',cursor:'pointer'  }}/>}
-          <p style={{ fontSize: "1.3rem"}}>BOil Water Alert</p>
+          <p style={{ fontSize: "1.3rem"}}>{props.alert.alert_name}</p>
         </div>
         <div style={{paddingRight:'3rem'}}>
           <IoCallOutline style={{ fontSize: "2rem" }} />
@@ -124,7 +124,10 @@ export function AlertInfo(props) {
         </div>
       </div>
 
-      {isServiceListVisible && <AlertList />}
+      {isServiceListVisible && props.service_area &&props.service_area.map((service)=>{
+
+        return(<AlertList service_area={service.service_area} key={service.id}/>)
+      })}
     </>
   );
 }

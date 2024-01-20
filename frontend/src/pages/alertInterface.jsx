@@ -232,7 +232,7 @@ export function AlertInterface(){
     <FilterAlertHeader />
    {alerts &&alerts.map((alert)=>{
      return(
-       <AlertInfo service_area={alert.service_area}/>
+       <AlertInfo key={alert.alert.id}alert={alert.alert} service_area={alert.service_area}/>
     )
   })}
   </div>
