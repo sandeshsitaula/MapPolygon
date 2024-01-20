@@ -6,104 +6,24 @@ import { useRef } from "react";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
 import { Button, Form } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,Link } from "react-router-dom";
 import AxiosInstance from '../axiosInstance'
 import {CustomerDetail} from '../components/customerDetail'
 
-// function ShowSaved({ savedData }) {
-//   const parsePolygon = (polygon) => {
-//     // Check if the polygon format includes SRID information
-//     const isSRIDIncluded = polygon.startsWith("SRID=4326;");
-
-//     // Extract the coordinates string (remove SRID information if present)
-//     const coordinatesString = isSRIDIncluded
-//       ? polygon.substring(20, polygon.length - 2)
-//       : polygon;
-//     // Split the coordinates into individual points
-//     const points = coordinatesString.split(",").map((coord) =>
-//       coord
-//         .trim()
-//         .split(/\s+/)
-//         .map((c) => parseFloat(c))
-//     );
-//     // Swap latitude and longitude for Leaflet
-
-//     const polygonCoordinates = points.map((point) => [point[1], point[0]]);
-//     return polygonCoordinates;
-//   };
-//   const mapRef = useRef();
-
-//   return (
-//     <div style={{ marginTop: "3rem", textAlign: "center", color: "white" }}>
-//       <h3>Your Saved Data</h3>
-
-//       <div
-//         style={{
-//           display: "flex",
-//           flexDirection: "row",
-//           flexWrap: "wrap",
-//           justifyContent: "center",
-//         }}
-//       >
-//         {savedData
-//           ? savedData.map((data) => {
-//             const polygonCoordinates = parsePolygon(data.polygon);
-//             const averageLat = polygonCoordinates.reduce((sum, coord) => sum + coord[0], 0) / polygonCoordinates.length;
-//             const averageLng = polygonCoordinates.reduce((sum, coord) => sum + coord[1], 0) / polygonCoordinates.length;
-//             const center = {
-//               lat: averageLat,
-//               lng: averageLng,
-//             };
-//             const zoomLevel = localStorage.getItem(`ZoomLevelPolygon${data.id}`) - 1 || 12;
-
-//             return (
-//               <Link
-//                 key={data.id}
-//                 to={`/viewMap/${data.id}`}
-//                 style={{ margin: "20px", width: "350px", height: "300px" }}
-//               >
-//                 <div
-//                   id={data.id}
-//                   style={{
-//                     padding: "10px",
-//                     backgroundColor: "gray",
-//                     color: "white",
-//                   }}
-//                 >
-//                   Polygon Id:{data.id}
-//                   <MapContainer
-//                     dragging={false}
-//                     scrollWheelZoom={false}
-//                     center={center}
-//                     zoomControl={false}
-//                     zoom={zoomLevel}
-//                     style={{ height: "250px", width: "100%" }}
-//                     ref={mapRef}
-//                   >
-//                     <TileLayer
-//                       url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-//                       attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-//                     />
-//                     <Polygon
-//                       positions={polygonCoordinates}
-//                       pathOptions={{ color: "blue" }}
-//                     />
-//                   </MapContainer>
-//                 </div>
-//               </Link>
-//             );
-//           })
-//           : "No Data To Show Right Now"}
-//       </div>
-//     </div>
+import {AddIcon} from '../components/AddIcon'
 
 export function ServiceAreaInterface(){
 
-  const [serviceArea,setServiceArea]=useState(null)
-  const [customers,setCustomer]=useState(null)
+  const [serviceArea,setServiceArea]=useState(null) //for displaying polygons
+  const [customers,setCustomer]=useState(null)//for displaying users
+
+  const [textContent,setTextContent]=useState(false)
   const [center, setCenter] = useState({ lat: 51.505, lng: -0.09 });
   const ZOOM_LEVEL=localStorage.getItem('zoomLevelServiceArea')||12
 
+ function toggleTextContent(){
+   setTextContent((prev)=>!prev)
+}
 
   useEffect(() => {
     const handleZoomChanged = () => {
@@ -204,6 +124,17 @@ return(
             })
             }
           </MapContainer>
+
+   {textContent && <div style={{zIndex:'10000',position:'absolute',top:'60%',right:'1%'}}>
+   <div style={{backgroundColor:'white',color:'black',padding:'20px'}}>
+  <Link style={{textDecoration:'none '}} to="/newServiceArea"> <div  style={{cursor:'pointer',color:'black',textDecoration:'none'}}>Create Service Area</div></Link>
+    </div>
+      <AddIcon  setTextContent={toggleTextContent}/>
+    </div> }
+    {!textContent &&<div style={{zIndex:'10000',position:'absolute',top:'70%',right:'10%'}}>
+      <AddIcon setTextContent={toggleTextContent} />
+      </div>
+    }
   </>
 )
 }

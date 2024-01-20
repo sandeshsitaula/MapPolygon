@@ -6,7 +6,7 @@ import { ServiceAreaInterface } from "./pages/serviceAreaInterface";
 import { AlertInterface } from "./pages/alertInterface";
 import { CustomerInterface } from "./pages/customerInterface";
 import {MainLayout} from './pages/layout.jsx'
-
+import {AddNewServiceArea} from './pages/newServiceArea'
 import {UserInfo} from "./components/UserInfo";
 
 
@@ -19,6 +19,7 @@ function App() {
           <Route path="/customerInterface" element={<MainLayout><CustomerInterface /></MainLayout>} />
           <Route path="/alertInterface" element={<MainLayout><AlertInterface /></MainLayout>} />
           <Route path="/serviceAreaInterface/" element={<MainLayout><ServiceAreaInterface /></MainLayout>} />
+          <Route path="/newServiceArea/" element={<AddNewServiceArea />} />
         </Routes>
       </Router>  }
     </>

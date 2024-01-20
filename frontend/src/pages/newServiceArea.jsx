@@ -231,6 +231,7 @@ export function AddNewServiceArea() {
           justifyContent: "space-around",
           backgroundColor: "#242424",
           paddingTop: "50px",
+          paddingBottom:'20px',
           textAlign: "center",
         }}
       >
