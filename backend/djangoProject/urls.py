@@ -6,5 +6,6 @@ from django.urls import path,include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/map/',include('Mapapp.urls')),
-    path('api/customer/',include('customerapp.urls'))
+    path('api/customer/',include('customerapp.urls')),
+    path('api/alert/',include('alertapp.urls')),
 ]
