@@ -12,4 +12,4 @@ class AlertServiceModelSerializer(serializers.ModelSerializer):
     service_area=ServiceAreaSerializer()
     class Meta:
         model=AlertServiceModel
-        fields='__all__'
+        exclude=['alert']

@@ -14,14 +14,10 @@ import os
 def AddAlert(request):
     try:
         data=json.loads(request.body)
-        print(data)
         alert_name=data.get('alert_name')
         message=data.get('alert_message')
-        print(alert_name,message)
 
         alert_service_area=data.get('alert_service_area')
-
-        print(alert_service_area)
         alert=AlertModel(alert_name=alert_name,message=message)
         alert.save()
         for service_area_id in alert_service_area:
@@ -32,10 +28,34 @@ def AddAlert(request):
 
         return Response({'message':"Alert has been successfully saved"},status=201)
 
-
     except Exception as e:
         error=str(e)
         print(error)
         return Response({'error':f"Unexpected error occured f{error}"},status=400)
+
+@api_view(['GET'])
+def GetAllAlert(request):
+    try:
+
+        allAlert=[]
+        alerts=AlertModel.objects.all().order_by('-id')
+
+        for alert in alerts:
+            alertService=AlertServiceModel.objects.filter(alert=alert).order_by('-id')
+            data={
+               'alert':AlertModelSerializer(alert).data,
+               'service_area':AlertServiceModelSerializer(alertService,many=True).data
+                }
+
+            allAlert.append(data)
+
+
+        return Response({'data':allAlert},status=200)
+
+
+    except Exception as e:
+        error=str(e)
+        return Response({'error':f"Unexpected Error occured {error}"},status=400)
+
 
 

@@ -50,7 +50,7 @@ function AlertList(props) {
   );
 }
 
-export const FilterServiceHeader = () => {
+export const FilterAlertHeader = () => {
   return (
     <div
       style={{
@@ -90,9 +90,10 @@ export const FilterServiceHeader = () => {
   );
 };
 
-export function AlertInfo() {
+export function AlertInfo(props) {
   const [isServiceListVisible, setIsServiceListVisible] = useState(false);
 
+  console.log(props.service_area)
   const toggleServiceList = () => {
     setIsServiceListVisible(!isServiceListVisible);
   };
@@ -123,7 +124,7 @@ export function AlertInfo() {
         </div>
       </div>
 
-      {isServiceListVisible && <ServiceList />}
+      {isServiceListVisible && <AlertList />}
     </>
   );
 }
