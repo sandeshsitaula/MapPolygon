@@ -97,8 +97,60 @@ const parsePolygon = (polygon) => {
     getUsers()
   }, [])
 
+
+  /* -----------  for searching location -------- */
+    const [searchValue, setSearchValue] = useState("");
+  const handleSearchChange = (e) => {
+    setSearchValue(e.target.value);
+  };
+
+  function handleSubmit(e){
+    e.preventDefault()
+    handleSelect()
+  }
+
+
+  const handleSelect = async () => {
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${searchValue}`
+      );
+      const data = await response.json();
+      if (data.length > 0) {
+        const { lat, lon } = data[0];
+        setCenter({ lat: parseFloat(lat), lng: parseFloat(lon) });
+      }
+    } catch (error) {
+      console.error("Error fetching location:", error);
+    }
+  };
+
+
+/*    for updating map */
+    useEffect(() => {
+    // Manually set the center of the map when the center state changes using useref
+    if (mapRef.current && center) {
+      mapRef.current.setView([center.lat, center.lng], ZOOM_LEVEL);
+    }
+  }, [center]);
+
+
 return(
   <>
+
+ <div style={{ display: "flex",position:'absolute',right:'5%',zIndex:'10000' }}>
+          <Form onSubmit={handleSubmit}>
+            <Form.Control
+              value={searchValue}
+              onChange={handleSearchChange}
+              placeholder="Search Location"
+            />
+          </Form>
+          <Button  style={{marginLeft:'20px'}} onClick={handleSelect}>
+            Submit
+          </Button>
+        </div>
+
           <MapContainer
             center={center}
             zoom={ZOOM_LEVEL}

@@ -31,7 +31,7 @@ export function MainLayout(props){
         <>
         <div style={{backgroundColor:'black',display:'flex'}}>
         <Col  style={{borderRight:'solid 1px white',width:'5%'}}md={1}><SideBar /></Col>
-        <Col md={11}>
+        <Col md={12}>
         {props.children}
         </Col>
         </div>
