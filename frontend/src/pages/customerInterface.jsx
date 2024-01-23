@@ -12,10 +12,20 @@ import { CustomerAddModal } from '../components/customerAddModal'
 
 export function CustomerInterface() {
   const [customerData, setCustomerData] = useState(null)
+  const [originalData,setOriginalData]=useState(null)
   const [customerUpdater, setCustomerUpdater] = useState(false)
   const [textContent, setTextContent] = useState(false)
   const [showCustomerModal, setShowCustomerModal] = useState(false)
+  const [searchData,setSearchData]=useState([])
 
+  useEffect(()=>{
+    function filter(){
+      if (customerData){
+          console.log(customerData)
+      }
+    }
+    filter()
+  },[searchData])
   function customerUpdaterToggler() {
     setCustomerUpdater(!customerUpdater)
   }
@@ -27,7 +37,7 @@ export function CustomerInterface() {
       try {
         const response = await AxiosInstance.get('api/customer/getAllCustomer/')
         setCustomerData(response.data.data)
-        console.log(response.data.data)
+        setOriginalData(response.data.data)
       }
       catch (error) {
         console.log(error)
@@ -42,7 +52,7 @@ export function CustomerInterface() {
       {showCustomerModal && <CustomerAddModal customerUpdater={customerUpdaterToggler} setModal={setShowCustomerModal} />}
 
       <div style={{ minHeight: '100vh', position: 'relative' }}>
-        <FilterUserHeader />
+        <FilterUserHeader setSearchData={setSearchData} setCustomerData={setCustomerData} originalData={originalData}/>
         {customerData && customerData.map((data) => (
           <UserInfo key={data.customer.id} customerUpdaterToggler={customerUpdaterToggler} data={data} />
         ))}

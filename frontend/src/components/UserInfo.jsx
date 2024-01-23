@@ -29,13 +29,50 @@ function UserList(props) {
           color: "white",
         }}
       >
-        <p style={{ marginRight: "20rem" }}>{props.data.address}<br />{props.data.state}{props.data.country}</p>
-        <p>Service {props.data.id}</p>
+        <p style={{ marginRight: "20rem" }}>{props.data.address}<br />{props.data.state} {props.data.country}</p>
+        <p>Service Area: {props.data.id}</p>
       </div>
     </div>
   );
 }
-export const FilterUserHeader = () => {
+
+
+export const FilterUserHeader = (props) => {
+
+const [searchData,setSearchData]=useState('')
+
+  // Function to filter data based on text
+  const filterData = (text) => {
+    return props.originalData.filter(item => {
+      // Check if the text starts with "service"
+      if (text.toLowerCase().startsWith('service area')) {
+        // Search based on service ID
+        return item.service_address.some(address =>
+          address.id.toString().includes(text.toLowerCase().replace('service area ', ''))
+        );
+      } else {
+        // Search based on customer details
+        const customer = item.customer;
+        return (
+          customer.first_name.toLowerCase().includes(text.toLowerCase()) ||
+          customer.last_name.toLowerCase().includes(text.toLowerCase()) ||
+          // Adjust the condition based on your address properties
+          item.service_address.some(address =>
+            address.country.toLowerCase().includes(text.toLowerCase())||
+            address.address.toLowerCase().includes(text.toLowerCase())||
+            address.city.toLowerCase().includes(text.toLowerCase())
+          )
+        );
+      }
+    });
+  };
+
+
+function handleSubmit(){
+  props.setSearchData(searchData)
+  console.log(filterData(searchData))
+ props.setCustomerData(filterData(searchData))
+}
   return (
     <div
       style={{
@@ -49,28 +86,26 @@ export const FilterUserHeader = () => {
     >
       <div>
         <h3>Filters</h3>
-        <input
-          type="search"
+{/* */}
+      </div>
+      <div>
+       <input
+          type="text"
+          id="search"
           style={{
-            marginLeft: "35px",
             padding: "8px",
+          marginRight:'8px',
             width: "190px",
-            borderRadius: "20px",
             outline: "none",
           }}
+          value={searchData}
+          onChange={(e)=>setSearchData(e.target.value)}
+          placeholder="Search"
         />
-      </div>
-      <div></div>
-      <Button
-        style={{
-          backgroundColor: "white",
-          color: "gray",
-          padding: "10px 60px",
-          marginRight: "2rem",
-        }}
-      >
-        Search
-      </Button>
+
+
+        <Button onClick={()=>handleSubmit()} variant="danger">Submit</Button>
+        </div>
     </div>
   );
 };

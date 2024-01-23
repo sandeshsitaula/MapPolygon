@@ -97,7 +97,6 @@ def GetAllCustomerLocation(request):
        return Response({'error':f"Unexpected error occured ...{error}"},status=400)
 
 
-
 @api_view(['GET'])
 def GetAllCustomer(request):
     try:
@@ -152,8 +151,6 @@ def UpdateCustomer(request, customerId):
         customer.save()
         msg = {'message': 'The user has been updated','data':ServiceAddressSerializer(serviceAddress[0]).data}
         return Response(msg, status=200)
-
-
 
     except Customer.DoesNotExist:
         return Response({"message": "No user found"}, status=404)
