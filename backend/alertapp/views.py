@@ -15,7 +15,7 @@ import os
 def stubFunction(customerList,message):
     try:
         for customer in customerList:
-            print(customer.get('email')) # will later be used to send email
+            print(customer.get('email'),' message:',message) # will later be used to send email
     except Exception as e:
         error=str(e)
         print(error)
@@ -96,6 +96,36 @@ def ResolveAlert(request,alertId):
         print(customerList)
         return Response({'message':"The Alert has been successfully resolved"},status=200)
 
+    except Exception as e:
+        error=str(e)
+        print(error)
+        return Response({'error':f"unexpected error occured"})
+
+
+
+
+@api_view(['GET'])
+def SendMessage(request,alertId):
+    try:
+        alert=AlertModel.objects.get(id=alertId)
+        customerList=[]
+        #Get list of all alert services
+        alertServices=AlertServiceModel.objects.filter(alert=alert).order_by('-id')
+
+        #for the lsit of services get the corresponding service address to get customer list
+        for alertService in alertServices:
+            serviceAddress=ServiceAddress.objects.filter(service_area=alertService.service_area).order_by('-id')
+
+            #for getting individual service address to get customer data
+            for service in serviceAddress:
+                data=ServiceAddressSerializer(service).data.get('customer')
+                if data not in customerList:
+                    customerList.append(data)
+
+
+        #will run function for all the customers  (later can be made background task using celery)
+        stubFunction(customerList,alert.message)
+        return Response({'message':"The Message has been successfully Sent"},status=200)
 
     except Exception as e:
         error=str(e)

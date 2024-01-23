@@ -42,7 +42,7 @@ export function AlertInterface() {
       }
     }
     getAlerts()
-  }, [])
+  }, [alertUpdater])
   return (
     <>
       {modalShow &&
