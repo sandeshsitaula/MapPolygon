@@ -30,7 +30,7 @@ function UserList(props) {
         }}
       >
         <p style={{ marginRight: "20rem" }}>{props.data.address}<br />{props.data.state} {props.data.country}</p>
-        <p>Service Area: {props.data.id}</p>
+        <p>Service Area: {props.data.service_area.id}</p>
       </div>
     </div>
   );
@@ -38,17 +38,16 @@ function UserList(props) {
 
 
 export const FilterUserHeader = (props) => {
-
 const [searchData,setSearchData]=useState('')
 const [currResult,setCurrResult]=useState([])
   // Function to filter data based on text
   const filterData = (text) => {
     return props.originalData && props.originalData.filter(item => {
       // Check if the text starts with "service"
-      if (text.toLowerCase().startsWith('service area')) {
+      if (text.toLowerCase().startsWith('service area ')) {
         // Search based on service ID
         return item.service_address.some(address =>
-          address.id.toString().includes(text.toLowerCase().replace('service area ', ''))
+          address.service_area.id.toString()==(text.toLowerCase().replace('service area ', ''))
         );
       } else {
         // Search based on customer details
@@ -71,49 +70,33 @@ const [currResult,setCurrResult]=useState([])
 
 useEffect(()=>{
  function setCustomer(){
-   if (currResult==0){
-     props.setCustomerData(props.originalData)
-  }else{
    props.setCustomerData(currResult)}
- }
  setCustomer()
 },[currResult])
-
 function handleSubmit(){
-  if (props.searchData.some((data)=>data==searchData)){
+  if (props.searchData.some((data)=>data==searchData)){ //duplicate search entry
     return
   }
-
   if (searchData==''){
     return
   }
   props.setSearchData((prev)=>[
     ...prev,searchData])
 
-  var result=filterData(searchData)
 
-if (result.length > 0) {
-  setCurrResult(prevArray => {
-    // Create a Set from the current result to check for duplicates
-    const uniqueSet = new Set(prevArray.map(item => item.customer.id));
-
-    // Filter out elements from the result that already exist in the set
-    const filteredResult = result.filter(item => !uniqueSet.has(item.customer.id));
-
-    // Concatenate the filtered result with the previous array
-    return prevArray.concat(filteredResult);
-  });
-}
 }
 
-function handleCancel(index){
-setCurrResult([])
 
-  props.searchData.forEach((data,idx)=>{
-    console.log(data,index,idx)
-    if (idx==index){
 
-    }else{
+useEffect(()=>{
+ function iterator(){
+   if (props.searchData.length==0){
+     return
+  }
+
+  setCurrResult([])
+  props.searchData.forEach((data)=>{
+
      var result=filterData(data)
 
 if (result.length > 0) {
@@ -130,17 +113,22 @@ if (result.length > 0) {
   });
 }
 
-    }
-}
+  })}
 
-)
+iterator()
+},[props.searchData])
+
+function handleCancel(index){
    props.setSearchData((prevArray) => {
       // Use slice to create a new array without the element at the specified index
       const newArray = [...prevArray.slice(0, index), ...prevArray.slice(index + 1)];
       return newArray;
     });
 
-}
+if (props.searchData.length==1){
+  props.setCustomerData(props.originalData)
+}}
+
 
   return (
     <div
