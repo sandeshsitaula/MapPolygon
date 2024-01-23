@@ -18,14 +18,7 @@ export function CustomerInterface() {
   const [showCustomerModal, setShowCustomerModal] = useState(false)
   const [searchData,setSearchData]=useState([])
 
-  useEffect(()=>{
-    function filter(){
-      if (customerData){
-          console.log(customerData)
-      }
-    }
-    filter()
-  },[searchData])
+
   function customerUpdaterToggler() {
     setCustomerUpdater(!customerUpdater)
   }
@@ -46,16 +39,21 @@ export function CustomerInterface() {
     }
     getAllCustomers()
   }, [customerUpdater])
+
+
   return (
     <>
 
       {showCustomerModal && <CustomerAddModal customerUpdater={customerUpdaterToggler} setModal={setShowCustomerModal} />}
 
       <div style={{ minHeight: '100vh', position: 'relative' }}>
-        <FilterUserHeader setSearchData={setSearchData} setCustomerData={setCustomerData} originalData={originalData}/>
-        {customerData && customerData.map((data) => (
+        <FilterUserHeader searchData={searchData} setSearchData={setSearchData} setCustomerData={setCustomerData} originalData={originalData}/>
+
+
+        {customerData && customerData.map((data) => {
+          return(
           <UserInfo key={data.customer.id} customerUpdaterToggler={customerUpdaterToggler} data={data} />
-        ))}
+          )})}
 
         <div>
         </div>

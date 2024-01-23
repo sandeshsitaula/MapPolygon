@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { IoCallOutline } from "react-icons/io5";
@@ -40,10 +40,10 @@ function UserList(props) {
 export const FilterUserHeader = (props) => {
 
 const [searchData,setSearchData]=useState('')
-
+const [currResult,setCurrResult]=useState([])
   // Function to filter data based on text
   const filterData = (text) => {
-    return props.originalData.filter(item => {
+    return props.originalData && props.originalData.filter(item => {
       // Check if the text starts with "service"
       if (text.toLowerCase().startsWith('service area')) {
         // Search based on service ID
@@ -68,10 +68,44 @@ const [searchData,setSearchData]=useState('')
   };
 
 
+
+useEffect(()=>{
+ function setCustomer(){
+   if (currResult.length>0){
+    console.log(currResult)
+   props.setCustomerData(currResult)
+ }}
+ setCustomer()
+},[currResult])
+
 function handleSubmit(){
-  props.setSearchData(searchData)
-  console.log(filterData(searchData))
- props.setCustomerData(filterData(searchData))
+  if (props.searchData.some((data)=>data==searchData)){
+    return
+  }
+
+
+  if (searchData==''){
+    return
+  }
+  props.setSearchData((prev)=>[
+    ...prev,searchData])
+
+  var result=filterData(searchData)
+
+  // if ()
+  // setCurrResult(prevArray => prevArray.concat(result));
+if (result.length > 0) {
+  setCurrResult(prevArray => {
+    // Create a Set from the current result to check for duplicates
+    const uniqueSet = new Set(prevArray.map(item => item.customer.id));
+
+    // Filter out elements from the result that already exist in the set
+    const filteredResult = result.filter(item => !uniqueSet.has(item.customer.id));
+
+    // Concatenate the filtered result with the previous array
+    return prevArray.concat(filteredResult);
+  });
+}
 }
   return (
     <div
@@ -86,7 +120,18 @@ function handleSubmit(){
     >
       <div>
         <h3>Filters</h3>
-{/* */}
+        <div style={{display:'flex'}}>
+        {props.searchData.map((data,index)=>
+            (
+              <div key={index} style={{backgroundColor:'white',position:'relative',color:'black',marginLeft:'1rem',padding:'5px 20px',borderRadius:'20px'}}>
+        {data}
+        <span style={{cursor:'pointer',color:'gray',position:'absolute',right:'5px'}}>X</span>
+        </div>
+
+    )
+)}
+</div>
+
       </div>
       <div>
        <input
