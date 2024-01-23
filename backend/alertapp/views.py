@@ -27,7 +27,7 @@ def AddAlert(request):
         data=json.loads(request.body)
         alert_name=data.get('alert_name')
         message=data.get('alert_message')
-
+        customerList=[]
         alert_service_area=data.get('alert_service_area')
         alert=AlertModel(alert_name=alert_name,message=message)
         alert.save()
@@ -36,7 +36,20 @@ def AddAlert(request):
             alert_service=AlertServiceModel(alert=alert,service_area=service_area)
             alert_service.save()
 
+            #for getting all customers in that alert area
+            serviceAddress=ServiceAddress.objects.filter(service_area=service_area).order_by('-id')
+
+            #for getting individual service address to get customer data
+            for service in serviceAddress:
+                data=ServiceAddressSerializer(service).data.get('customer')
+                if data not in customerList:
+                    customerList.append(data)
+
+
+        stubFunction(customerList,alert.message)
+
         return Response({'message':"Alert has been successfully saved"},status=201)
+
 
     except Exception as e:
         error=str(e)
