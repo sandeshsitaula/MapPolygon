@@ -5,8 +5,30 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import { IoCallOutline } from "react-icons/io5";
 import { IoIosArrowUp } from "react-icons/io";
 
+import AxiosInstance from '../axiosInstance'
 function AlertList(props) {
   console.log(props.alert)
+  async function SendMessage(alertId){
+    try{
+        const response=await AxiosInstance.get(`api/alert/sendMessage/${alertId}/`)
+        console.log(response)
+        alert(response.data.message)
+
+    }catch(error){
+      console.log(error)
+    }
+  }
+
+    async function ResolveAlert(alertId){
+    try{
+        const response=await AxiosInstance.get(`api/alert/resolveAlert/${alertId}/`)
+        console.log(response)
+        alert(response.data.message)
+
+    }catch(error){
+      console.log(error)
+    }
+  }
   return (
     <div
       style={{
@@ -33,6 +55,7 @@ function AlertList(props) {
             borderRadius: "0px",
             marginRight: "20px",
           }}
+          onClick={()=>SendMessage(props.alert.id)}
         >
           Send Message
         </Button>
@@ -45,6 +68,7 @@ function AlertList(props) {
             borderRadius: "0px",
             marginRight: "20px",
           }}
+          onClick={()=>ResolveAlert(props.alert.id)}
         >
           Resolve Alert
         </Button>
