@@ -1,27 +1,29 @@
 import React, { useState, useEffect } from "react";
 import L from "leaflet";
-import { MapContainer, TileLayer, FeatureGroup, Marker } from "react-leaflet";
+import { MapContainer, TileLayer, FeatureGroup, Marker, Polygon } from "react-leaflet";
 import { EditControl } from "react-leaflet-draw";
 import { useRef } from "react";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
 import { Button, Form } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import AxiosInstance from '../axiosInstance'
-import {CustomerDetail} from '../components/customerDetail'
+import { CustomerDetail } from '../components/customerDetail'
 
+import { AddIcon } from '../components/AddIcon'
 
+export function ServiceAreaInterface() {
 
-/*
-export function AddMap() {
+  const [serviceArea, setServiceArea] = useState(null) //for displaying polygons
+  const [customers, setCustomer] = useState(null)//for displaying users
+
+  const [textContent, setTextContent] = useState(false)
   const [center, setCenter] = useState({ lat: 51.505, lng: -0.09 });
-  const [MapLayers, setMapLayers] = useState([]);
-  const mapRef = useRef();
-  const navigate = useNavigate();
-  const [users, setUsers] = useState(null)
-  const [customers, setCustomers] = useState([]);
-  const [polygonId, setPolygonId] = useState(-1)
-  const ZOOM_LEVEL = localStorage.getItem("AddzoomLevel") || 12;
+  const ZOOM_LEVEL = localStorage.getItem('zoomLevelServiceArea') || 12
+
+  function toggleTextContent() {
+    setTextContent((prev) => !prev)
+  }
 
   useEffect(() => {
     const handleZoomChanged = () => {
@@ -29,10 +31,10 @@ export function AddMap() {
       const map = mapRef.current;
       if (map) {
         const zoomLevel = map.getZoom();
-        localStorage.setItem("AddzoomLevel", zoomLevel);
-          localStorage.setItem(`ZoomLevelPolygon${polygonId}`, zoomLevel);
+        localStorage.setItem("zoomLevelServiceArea", zoomLevel);
       }
     };
+
     // Assuming mapRef.current is your reference to the map object
     const map = mapRef.current;
     // Check if the map object is available
@@ -44,37 +46,50 @@ export function AddMap() {
         map.off('zoomend', handleZoomChanged);
       };
     }
-  }, [mapRef, polygonId]); // Include mapRef and polygonId in the dependency array
+  }, [serviceArea]); // Include mapRef and polygonId in the dependency array
 
 
-  // Function to handle 'beforeunload' event
-  const handleBeforeUnload = () => {
-    const map = mapRef.current;
-    if (map) {
-      const zoomLevel = map.getZoom();
-      localStorage.setItem("AddzoomLevel", zoomLevel);
-    }
+  const parsePolygon = (polygon) => {
+    // Check if the polygon format includes SRID information
+    const isSRIDIncluded = polygon.startsWith("SRID=4326;");
+
+    // Extract the coordinates string (remove SRID information if present)
+    const coordinatesString = isSRIDIncluded
+      ? polygon.substring(20, polygon.length - 2)
+      : polygon;
+    // Split the coordinates into individual points
+    const points = coordinatesString.split(",").map((coord) =>
+      coord
+        .trim()
+        .split(/\s+/)
+        .map((c) => parseFloat(c))
+    );
+    // Swap latitude and longitude for Leaflet
+
+    const polygonCoordinates = points.map((point) => [point[1], point[0]]);
+    return polygonCoordinates;
   };
-  // Add 'beforeunload' event listener when the component mounts
-  useEffect(() => {
-    const unloadListener = (event) => {
-      handleBeforeUnload();
-      // The following line is necessary for older browsers
-      event.returnValue = "";
-    };
-    window.addEventListener("beforeunload", unloadListener);
-    // Remove the event listener when the component unmounts
-    return () => {
-      window.removeEventListener("beforeunload", unloadListener);
-    };
-  }, []);
 
+
+  const mapRef = useRef();
+
+  useEffect(() => {
+    async function GetServiceArea() {
+      try {
+        const response = await AxiosInstance.get("api/map/getAllPolygons/");
+        setServiceArea(response.data.data);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    GetServiceArea();
+  }, []);
 
   useEffect(() => {
     async function getUsers() {
       try {
         const response = await AxiosInstance.get('api/customer/getAllCustomerLocation/')
-        setUsers(response.data.data)
+        setCustomer(response.data.data)
       } catch (error) {
         console.log(error)
       }
@@ -82,10 +97,18 @@ export function AddMap() {
     getUsers()
   }, [])
 
+
+  /* -----------  for searching location -------- */
   const [searchValue, setSearchValue] = useState("");
   const handleSearchChange = (e) => {
     setSearchValue(e.target.value);
   };
+
+  function handleSubmit(e) {
+    e.preventDefault()
+    handleSelect()
+  }
+
 
   const handleSelect = async () => {
     try {
@@ -102,7 +125,8 @@ export function AddMap() {
     }
   };
 
-// Using map ref to manually change the position in map 
+
+  /*    for updating map */
   useEffect(() => {
     // Manually set the center of the map when the center state changes using useref
     if (mapRef.current && center) {
@@ -111,165 +135,59 @@ export function AddMap() {
   }, [center]);
 
 
-
-  //for creating removing and editing handlers
-  const _onCreate = (e) => {
-    const { layerType, layer } = e;
-    if (layerType === "polygon") {
-      const { _leaflet_id } = layer;
-      setMapLayers((layers) => [
-        ...layers,
-
-        { leaflet_id: _leaflet_id, latlngs: layer._latlngs[0] },
-      ]);
-    }
-  };
-
-  const onEdited = (layers) => {
-    //polygons that are changed are stored in changedPolys array
-    const changedPolys = Object.values(layers._layers).map((layer) => {
-      const latlngs = layer._latlngs[0].map((latlng) => {
-        return { lat: latlng.lat, lng: latlng.lng };
-      });
-      return { leaflet_id: layers._layers._leaflet_id, latlngs: latlngs };
-    });
-
-    //update state of all the polygons. replace polygons with changedPolys
-    changedPolys.forEach((changedPoly) => {
-      setMapLayers((polygons) => {
-        return polygons.map((polygon) => {
-          if (polygon.leaflet_id === changedPoly.leaflet_id) {
-            return { id: changedPoly.leaflet_id, latlngs: changedPoly.latlngs };
-          }
-          return polygon;
-        });
-      });
-    });
-  };
-
-  const _onDeleted = (e) => {
-    const {
-      layers: { _layers },
-    } = e;
-
-    Object.values(_layers).map(({ _leaflet_id }) => {
-      setMapLayers((layers) =>
-        layers.filter((l) => l.leaflet_id !== _leaflet_id)
-      );
-    });
-  };
-
-  //on adding polygon
-
-  const handleClick = async () => {
-    if (MapLayers.length == 0) {
-      alert("create atleast one polygon");
-      return;
-    }
-    try {
-      const response = await AxiosInstance.post(
-        "api/map/addPolygon/",
-        MapLayers
-      );
-      if (response.data.data) {
-        setCustomers(response.data.data);
-      }
-      if (response.data.polygonId) {
-        setPolygonId(response.data.polygonId)
-      }
-      alert(response.data.msg);
-
-      const map = mapRef.current;
-      const zoomLevel = map.getZoom()
-      localStorage.setItem(`ZoomLevelPolygon${response.data.polygonId}`, zoomLevel);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   return (
     <>
+
+      <div style={{ display: "flex", position: 'absolute', right: '5%', zIndex: '10000' }}>
+        <Form onSubmit={handleSubmit}>
+          <Form.Control
+            value={searchValue}
+            onChange={handleSearchChange}
+            placeholder="Search Location"
+          />
+        </Form>
+        <Button style={{ marginLeft: '20px' }} onClick={handleSelect}>
+          Submit
+        </Button>
+      </div>
+
       <MapContainer
         center={center}
         zoom={ZOOM_LEVEL}
-        style={{ height: "500px", width: "100%" }}
+        style={{ height: '100vh', width: "100%" }}
         ref={mapRef}
       >
-        <FeatureGroup>
-          <EditControl
-            position="topright"
-            onCreated={_onCreate}
-            onEdited={(e) => {
-              onEdited(e.layers);
-            }}
-            onDeleted={_onDeleted}
-            draw={{
-              rectangle: false,
-              circle: false,
-              circlemarker: false,
-              marker: false,
-              polyline: false,
-            }}
-          />
-        </FeatureGroup>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
-        {users && users.map((user) => {
+        {serviceArea && serviceArea.map((area) => {
+          const coordinates = parsePolygon(area.polygon)
           return (
-            <Marker key={user[0]} position={user}>
+            <Polygon key={area.id} positions={coordinates} pathOptions={{ color: "blue" }} />
+          )
+        })}
+
+
+        {customers && customers.map((customers) => {
+          return (
+            <Marker key={customers[0]} position={customers}>
             </Marker>
           )
         })
         }
       </MapContainer>
 
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-around",
-          backgroundColor: "#242424",
-          paddingTop: "50px",
-          textAlign: "center",
-        }}
-      >
-        <div style={{ display: "flex" }}>
-          <Form>
-            <Form.Control
-              value={searchValue}
-              onChange={handleSearchChange}
-              placeholder="Search Location"
-            />
-          </Form>
-          <button type="button" onClick={handleSelect}>
-            Search Location
-          </button>
+      {textContent && <div style={{ zIndex: '10000', position: 'absolute', top: '60%', right: '1%' }}>
+        <div style={{ backgroundColor: 'white', color: 'black', padding: '20px' }}>
+          <Link style={{ textDecoration: 'none ' }} to="/newServiceArea"> <div style={{ cursor: 'pointer', color: 'black', textDecoration: 'none' }}>Create Service Area</div></Link>
         </div>
-        <Button variant="outline-primary" onClick={handleClick}>
-          Save Data(Polygon)
-        </Button>
-        <Button
-          style={{ marginLeft: "20px" }}
-          variant="outline-secondary"
-          onClick={() => {
-            navigate("/");
-          }}
-        >
-          Go Home
-        </Button>
+        <AddIcon setTextContent={toggleTextContent} />
+      </div>}
+      {!textContent && <div style={{ zIndex: '10000', position: 'absolute', top: '70%', right: '10%' }}>
+        <AddIcon setTextContent={toggleTextContent} />
       </div>
-
-      {customers.length > 0 && (
-        <CustomerDetail customers={customers} />
-)}
+      }
     </>
-  );
-}
-*/
-
-export function ServiceAreaInterface(){
-return(
-  <div>hello</div>
-)
+  )
 }

@@ -5,7 +5,7 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import { IoCallOutline } from "react-icons/io5";
 import { IoIosArrowUp } from "react-icons/io";
 
-function ServiceList(props) {
+function AlertList(props) {
   return (
     <div
       style={{
@@ -17,8 +17,8 @@ function ServiceList(props) {
         justifyContent: "space-between",
       }}
     >
-      <div style={{ display:'flex',flexWrap:"wrap",alignItems:"center",paddingLeft: "2rem", color: "white" }}>
-        <p>Service Area1</p>
+      <div style={{ display: 'flex', flexWrap: "wrap", alignItems: "center", paddingLeft: "2rem", color: "white" }}>
+        <p>{`Service Area: ${props.service_area.id}`}</p>
       </div>
       <div>
         <Button
@@ -50,7 +50,7 @@ function ServiceList(props) {
   );
 }
 
-export const FilterServiceHeader = () => {
+export const FilterAlertHeader = () => {
   return (
     <div
       style={{
@@ -90,12 +90,13 @@ export const FilterServiceHeader = () => {
   );
 };
 
-export function ServiceInfo() {
+export function AlertInfo(props) {
   const [isServiceListVisible, setIsServiceListVisible] = useState(false);
 
   const toggleServiceList = () => {
     setIsServiceListVisible(!isServiceListVisible);
   };
+  console.log(props.service_area)
   return (
     <>
       <div
@@ -104,26 +105,31 @@ export function ServiceInfo() {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-         
+
         }}
       >
-        <div style={{ display: "flex",  flexWrap:'wrap',
-          alignItems: "center",alignContent: "center" }}>
-        {isServiceListVisible? <RiArrowDropDownLine
+        <div style={{
+          display: "flex", flexWrap: 'wrap',
+          alignItems: "center", alignContent: "center"
+        }}>
+          {isServiceListVisible ? <RiArrowDropDownLine
             onClick={toggleServiceList}
-            style={{ fontSize: "3rem",marginRight:'1rem' ,cursor:'pointer' }}
-          />:
-          <IoIosArrowUp onClick={toggleServiceList}
-            style={{ fontSize: "2rem",marginRight:'1rem',cursor:'pointer'  }}/>}
-          <p style={{ fontSize: "1.3rem"}}>BOil Water Alert</p>
+            style={{ fontSize: "3rem", marginRight: '1rem', cursor: 'pointer' }}
+          /> :
+            <IoIosArrowUp onClick={toggleServiceList}
+              style={{ fontSize: "2rem", marginRight: '1rem', cursor: 'pointer' }} />}
+          <p style={{ fontSize: "1.3rem" }}>{props.alert.alert_name}</p>
         </div>
-        <div style={{paddingRight:'3rem'}}>
+        <div style={{ paddingRight: '3rem' }}>
           <IoCallOutline style={{ fontSize: "2rem" }} />
           <BsThreeDotsVertical style={{ fontSize: "2rem" }} />
         </div>
       </div>
 
-      {isServiceListVisible && <ServiceList />}
+      {isServiceListVisible && props.service_area && props.service_area.map((service) => {
+
+        return (<AlertList service_area={service.service_area} key={service.id} />)
+      })}
     </>
   );
 }

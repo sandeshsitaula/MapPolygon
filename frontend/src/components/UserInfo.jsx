@@ -3,8 +3,8 @@ import { RiArrowDropDownLine } from "react-icons/ri";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { IoCallOutline } from "react-icons/io5";
 import { IoIosArrowUp } from "react-icons/io";
-import {Button} from 'react-bootstrap'
-import {EditCustomerModal} from './EditCustomer'
+import { Button } from 'react-bootstrap'
+import { EditCustomerModal } from './EditCustomer'
 
 function UserList(props) {
   return (
@@ -80,17 +80,17 @@ export function UserInfo(props) {
 
   const toggleUserList = () => {
     setIsUserListVisible(!isUserListVisible);
-  };  
+  };
   const [isEditVisible, setIsEditVisible] = useState(false);
 
   const toggleEditCustomer = () => {
     setIsEditVisible(!isEditVisible);
   };
-  const [editCustomerModal,setEditCustomerModal]=useState(false)
+  const [editCustomerModal, setEditCustomerModal] = useState(false)
 
   return (
     <>
-    {editCustomerModal &&<EditCustomerModal setModal={setEditCustomerModal} customerId={props.data.customer.id} updater={props.customerUpdaterToggler}/>}
+      {editCustomerModal && <EditCustomerModal setModal={setEditCustomerModal} customerId={props.data.customer.id} updater={props.customerUpdaterToggler} />}
       <div
         style={{
           backgroundColor: "#d9d9d9",
@@ -100,7 +100,7 @@ export function UserInfo(props) {
           position: "relative",
         }}
       >
-       {isEditVisible&&<div style={{ backgroundColor:'white',padding:'20px',position: "absolute", top: "3rem", right: "0",cursor:'pointer' }} onClick={()=>setEditCustomerModal(true)}>
+        {isEditVisible && <div style={{ backgroundColor: 'white', padding: '20px', position: "absolute", top: "3rem", right: "0", cursor: 'pointer' }} onClick={() => setEditCustomerModal(true)}>
           Edit Customer
         </div>}
         <div
@@ -134,10 +134,10 @@ export function UserInfo(props) {
         </div>
         <div style={{ paddingRight: "3rem" }}>
           <IoCallOutline style={{ fontSize: "2rem" }} />
-          <BsThreeDotsVertical onClick={()=>{setIsUserListVisible(true);toggleEditCustomer()} }style={{ fontSize: "2rem",cursor:'pointer' }} />
+          <BsThreeDotsVertical onClick={() => { setIsUserListVisible(true); toggleEditCustomer() }} style={{ fontSize: "2rem", cursor: 'pointer' }} />
         </div>
       </div>
-      {isUserListVisible && <UserList data={props.data}/>}
+      {isUserListVisible && <UserList data={props.data} />}
     </>
   );
 }
