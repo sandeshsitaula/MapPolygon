@@ -59,6 +59,12 @@ export function AddAlertModal(props) {
 
   //handle submit send customer data
   async function handleSubmit() {
+
+     if (Object.values(alertData).some(value => value=="")) {
+       alert('some data are missing.fill all')
+       return
+    }
+
     if (loading) {
       return;
     }
@@ -88,7 +94,6 @@ export function AddAlertModal(props) {
     }
   }
 
-  useEffect(() => { console.log(alert) })
   const handleClose = () => { props.setModal(false) };
 
   return (
@@ -160,7 +165,7 @@ export function AddAlertModal(props) {
                         {loading ? "Loading" : "Submit Alert"}
                       </Button>
                       <Button
-                        onClick={() => navigate("/customerInterface")}
+                        onClick={() => navigate("/")}
                         style={{ width: "75%", marginTop: "25px" }}
                         variant="outline-danger"
                       >

@@ -6,6 +6,7 @@ import { IoCallOutline } from "react-icons/io5";
 import { IoIosArrowUp } from "react-icons/io";
 
 function AlertList(props) {
+  console.log(props.alert)
   return (
     <div
       style={{
@@ -21,7 +22,9 @@ function AlertList(props) {
         <p>{`Service Area: ${props.service_area.id}`}</p>
       </div>
       <div>
-        <Button
+    {props.alert.status=='ACTIVE'?(
+      <>
+       <Button
           style={{
             backgroundColor: "#d9d9d9",
             padding: "15px 20px",
@@ -45,6 +48,22 @@ function AlertList(props) {
         >
           Resolve Alert
         </Button>
+        </>
+    ):(
+        <Button
+          style={{
+            backgroundColor: "#d9d9d9",
+            padding: "15px 20px",
+            color: "black",
+            border: "none",
+            borderRadius: "0px",
+            marginRight: "20px",
+          }}
+        >
+           Alert Already Resolved
+        </Button>
+    )}
+
       </div>
     </div>
   );
@@ -226,7 +245,7 @@ export function AlertInfo(props) {
 
       {isServiceListVisible && props.service_area && props.service_area.map((service) => {
 
-        return (<AlertList service_area={service.service_area} key={service.id} />)
+        return (<AlertList alert={props.alert} service_area={service.service_area} key={service.id} />)
       })}
     </>
   );
