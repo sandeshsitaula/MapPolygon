@@ -71,10 +71,11 @@ const [currResult,setCurrResult]=useState([])
 
 useEffect(()=>{
  function setCustomer(){
-   if (currResult.length>0){
-    console.log(currResult)
-   props.setCustomerData(currResult)
- }}
+   if (currResult==0){
+     props.setCustomerData(props.originalData)
+  }else{
+   props.setCustomerData(currResult)}
+ }
  setCustomer()
 },[currResult])
 
@@ -82,7 +83,6 @@ function handleSubmit(){
   if (props.searchData.some((data)=>data==searchData)){
     return
   }
-
 
   if (searchData==''){
     return
@@ -92,8 +92,6 @@ function handleSubmit(){
 
   var result=filterData(searchData)
 
-  // if ()
-  // setCurrResult(prevArray => prevArray.concat(result));
 if (result.length > 0) {
   setCurrResult(prevArray => {
     // Create a Set from the current result to check for duplicates
@@ -107,6 +105,43 @@ if (result.length > 0) {
   });
 }
 }
+
+function handleCancel(index){
+setCurrResult([])
+
+  props.searchData.forEach((data,idx)=>{
+    console.log(data,index,idx)
+    if (idx==index){
+
+    }else{
+     var result=filterData(data)
+
+if (result.length > 0) {
+
+  setCurrResult(prevArray => {
+    // Create a Set from the current result to check for duplicates
+    const uniqueSet = new Set(prevArray.map(item => item.customer.id));
+
+    // Filter out elements from the result that already exist in the set
+    const filteredResult = result.filter(item => !uniqueSet.has(item.customer.id));
+
+    // Concatenate the filtered result with the previous array
+    return prevArray.concat(filteredResult);
+  });
+}
+
+    }
+}
+
+)
+   props.setSearchData((prevArray) => {
+      // Use slice to create a new array without the element at the specified index
+      const newArray = [...prevArray.slice(0, index), ...prevArray.slice(index + 1)];
+      return newArray;
+    });
+
+}
+
   return (
     <div
       style={{
@@ -125,7 +160,7 @@ if (result.length > 0) {
             (
               <div key={index} style={{backgroundColor:'white',position:'relative',color:'black',marginLeft:'1rem',padding:'5px 20px',borderRadius:'20px'}}>
         {data}
-        <span style={{cursor:'pointer',color:'gray',position:'absolute',right:'5px'}}>X</span>
+        <span onClick={()=>handleCancel(index)} style={{cursor:'pointer',color:'gray',position:'absolute',right:'5px'}}>X</span>
         </div>
 
     )
