@@ -53,7 +53,7 @@ export function AlertInterface() {
 
         {alerts && alerts.map((alert) => {
           return (
-            <AlertInfo key={alert.alert.id} alert={alert.alert} service_area={alert.service_area} />
+            <AlertInfo toggleAlertUpdater={toggleAlertUpdater} key={alert.alert.id} alert={alert.alert} service_area={alert.service_area} />
           )
         })}
       </div>

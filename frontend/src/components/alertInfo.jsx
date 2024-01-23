@@ -24,7 +24,7 @@ function AlertList(props) {
         const response=await AxiosInstance.get(`api/alert/resolveAlert/${alertId}/`)
         console.log(response)
         alert(response.data.message)
-
+      props.toggleAlertUpdater()
     }catch(error){
       console.log(error)
     }
@@ -269,7 +269,7 @@ export function AlertInfo(props) {
 
       {isServiceListVisible && props.service_area && props.service_area.map((service) => {
 
-        return (<AlertList alert={props.alert} service_area={service.service_area} key={service.id} />)
+        return (<AlertList alert={props.alert} toggleAlertUpdater={props.toggleAlertUpdater} service_area={service.service_area} key={service.id} />)
       })}
     </>
   );
