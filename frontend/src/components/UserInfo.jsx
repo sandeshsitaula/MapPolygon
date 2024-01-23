@@ -137,7 +137,7 @@ export function UserInfo(props) {
           <BsThreeDotsVertical onClick={() => { setIsUserListVisible(true); toggleEditCustomer() }} style={{ fontSize: "2rem", cursor: 'pointer' }} />
         </div>
       </div>
-      {isUserListVisible && <UserList data={props.data} />}
+      {isUserListVisible && props.data.service_address.map((service_area)=>(<UserList key={service_area.id} data={service_area} />))}
     </>
   );
 }
