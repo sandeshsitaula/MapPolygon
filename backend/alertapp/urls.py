@@ -3,4 +3,6 @@ from . import views
 urlpatterns=[
     path('addAlert/',views.AddAlert),
     path('allAlert/',views.GetAllAlert),
+    path('resolveAlert/<alertId>/',views.ResolveAlert),
+    path('sendMessage/<alertId>/',views.SendMessage),
     ]

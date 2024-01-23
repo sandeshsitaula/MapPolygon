@@ -11,9 +11,9 @@ const current=window.location.pathname
        <>
        <div
        style={{display:'flex',fontSize:'2rem',flexDirection:'column',alignItems:'center',paddingTop:'2rem'}}>
-    <Link to="/customerInterface">
+    <Link to="/">
        <FaRegUser
-        className={current=='/customerInterface'&&'activeLogo'}style={{color:'white',cursor:'pointer'}}/>
+        className={current=='/'&&'activeLogo'}style={{color:'white',cursor:'pointer'}}/>
         </Link>
         <Link to="/alertInterface">
        <GoAlertFill className={current=='/alertInterface'&&'activeLogo'}style={{color:'white',cursor:'pointer',marginTop:'3rem'}}/>

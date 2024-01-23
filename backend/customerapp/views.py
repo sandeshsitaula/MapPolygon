@@ -97,17 +97,22 @@ def GetAllCustomerLocation(request):
        return Response({'error':f"Unexpected error occured ...{error}"},status=400)
 
 
-
 @api_view(['GET'])
 def GetAllCustomer(request):
     try:
-        data=[]
+        result=[]
         customers=Customer.objects.all().order_by('-id')
         for customer in customers:
-            serviceAddress=ServiceAddress.objects.filter(customer=customer)[:1]
-            data.append(ServiceAddressSerializer(serviceAddress[0]).data)
+            serviceAddress=ServiceAddress.objects.filter(customer=customer).order_by('-id')
 
-        return Response({'data':data},status=200)
+            data={
+               'customer':CustomerSerializer(customer).data,
+               'service_address':ServiceAddressSerializer(serviceAddress,many=True).data
+                }
+            result.append(data)
+
+
+        return Response({'data':result},status=200)
     except Exception as e:
         error=str(e)
         return Response({'error':f"Unexpected error occured {error}"},status=400)
@@ -146,8 +151,6 @@ def UpdateCustomer(request, customerId):
         customer.save()
         msg = {'message': 'The user has been updated','data':ServiceAddressSerializer(serviceAddress[0]).data}
         return Response(msg, status=200)
-
-
 
     except Customer.DoesNotExist:
         return Response({"message": "No user found"}, status=404)

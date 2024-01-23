@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { IoCallOutline } from "react-icons/io5";
@@ -29,13 +29,107 @@ function UserList(props) {
           color: "white",
         }}
       >
-        <p style={{ marginRight: "20rem" }}>{props.data.address}<br />{props.data.state}{props.data.country}</p>
-        <p>Service {props.data.id}</p>
+        <p style={{ marginRight: "20rem" }}>{props.data.address}<br />{props.data.state} {props.data.country}</p>
+        <p>Service Area: {props.data.service_area.id}</p>
       </div>
     </div>
   );
 }
-export const FilterUserHeader = () => {
+
+
+export const FilterUserHeader = (props) => {
+const [searchData,setSearchData]=useState('')
+const [currResult,setCurrResult]=useState([])
+  // Function to filter data based on text
+  const filterData = (text) => {
+    return props.originalData && props.originalData.filter(item => {
+      // Check if the text starts with "service"
+      if (text.toLowerCase().startsWith('service area ')) {
+        // Search based on service ID
+        return item.service_address.some(address =>
+          address.service_area.id.toString()==(text.toLowerCase().replace('service area ', ''))
+        );
+      } else {
+        // Search based on customer details
+        const customer = item.customer;
+        return (
+          customer.first_name.toLowerCase().includes(text.toLowerCase()) ||
+          customer.last_name.toLowerCase().includes(text.toLowerCase()) ||
+          // Adjust the condition based on your address properties
+          item.service_address.some(address =>
+            address.country.toLowerCase().includes(text.toLowerCase())||
+            address.address.toLowerCase().includes(text.toLowerCase())||
+            address.city.toLowerCase().includes(text.toLowerCase())
+          )
+        );
+      }
+    });
+  };
+
+
+
+useEffect(()=>{
+ function setCustomer(){
+   props.setCustomerData(currResult)}
+ setCustomer()
+},[currResult])
+function handleSubmit(){
+  if (props.searchData.some((data)=>data==searchData)){ //duplicate search entry
+    return
+  }
+  if (searchData==''){
+    return
+  }
+  props.setSearchData((prev)=>[
+    ...prev,searchData])
+
+
+}
+
+
+
+useEffect(()=>{
+ function iterator(){
+   if (props.searchData.length==0){
+     return
+  }
+
+  setCurrResult([])
+  props.searchData.forEach((data)=>{
+
+     var result=filterData(data)
+
+if (result.length > 0) {
+
+  setCurrResult(prevArray => {
+    // Create a Set from the current result to check for duplicates
+    const uniqueSet = new Set(prevArray.map(item => item.customer.id));
+
+    // Filter out elements from the result that already exist in the set
+    const filteredResult = result.filter(item => !uniqueSet.has(item.customer.id));
+
+    // Concatenate the filtered result with the previous array
+    return prevArray.concat(filteredResult);
+  });
+}
+
+  })}
+
+iterator()
+},[props.searchData])
+
+function handleCancel(index){
+   props.setSearchData((prevArray) => {
+      // Use slice to create a new array without the element at the specified index
+      const newArray = [...prevArray.slice(0, index), ...prevArray.slice(index + 1)];
+      return newArray;
+    });
+
+if (props.searchData.length==1){
+  props.setCustomerData(props.originalData)
+}}
+
+
   return (
     <div
       style={{
@@ -49,28 +143,37 @@ export const FilterUserHeader = () => {
     >
       <div>
         <h3>Filters</h3>
-        <input
-          type="search"
+        <div style={{display:'flex'}}>
+        {props.searchData.map((data,index)=>
+            (
+              <div key={index} style={{backgroundColor:'white',position:'relative',color:'black',marginLeft:'1rem',padding:'5px 20px',borderRadius:'20px'}}>
+        {data}
+        <span onClick={()=>handleCancel(index)} style={{cursor:'pointer',color:'gray',position:'absolute',right:'5px'}}>X</span>
+        </div>
+
+    )
+)}
+</div>
+
+      </div>
+      <div>
+       <input
+          type="text"
+          id="search"
           style={{
-            marginLeft: "35px",
             padding: "8px",
+          marginRight:'8px',
             width: "190px",
-            borderRadius: "20px",
             outline: "none",
           }}
+          value={searchData}
+          onChange={(e)=>setSearchData(e.target.value)}
+          placeholder="Search"
         />
-      </div>
-      <div></div>
-      <Button
-        style={{
-          backgroundColor: "white",
-          color: "gray",
-          padding: "10px 60px",
-          marginRight: "2rem",
-        }}
-      >
-        Search
-      </Button>
+
+
+        <Button onClick={()=>handleSubmit()} variant="danger">Submit</Button>
+        </div>
     </div>
   );
 };
@@ -137,7 +240,7 @@ export function UserInfo(props) {
           <BsThreeDotsVertical onClick={() => { setIsUserListVisible(true); toggleEditCustomer() }} style={{ fontSize: "2rem", cursor: 'pointer' }} />
         </div>
       </div>
-      {isUserListVisible && <UserList data={props.data} />}
+      {isUserListVisible && props.data.service_address.map((service_area)=>(<UserList key={service_area.id} data={service_area} />))}
     </>
   );
 }
