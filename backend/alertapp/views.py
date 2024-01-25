@@ -10,12 +10,14 @@ from Mapapp.models import ServiceArea
 import requests
 import os
 
-
+from alertapp.tasks import sendMail
 
 def stubFunction(customerList,message):
     try:
+        print('customer',customerList,message)
         for customer in customerList:
-            print(customer.get('email'),' message:',message) # will later be used to send email
+            sendMail.delay(customer.get('phone_number'),message)
+
     except Exception as e:
         error=str(e)
         print(error)

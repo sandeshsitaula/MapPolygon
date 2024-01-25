@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.gis',
     'corsheaders',
     'rest_framework',
+    'celery',
     'Mapapp',
     'customerapp',
     'alertapp',
@@ -70,6 +71,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://react_container:3000",  # Use the service name, replace 3000 with your actual port
     # Add more origins if needed
 ]
+
+
 
 
 ROOT_URLCONF = 'djangoProject.urls'

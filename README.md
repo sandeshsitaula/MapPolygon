@@ -1,21 +1,15 @@
-## Map Polygon
-## Installing And Running Instruction
-``` bash 
-sudo docker-compose up --build #once and run without --build if dockerfile is not changed
+## Updated Readme for SMS Sending service 
+### First Install ShellMs application for android which allows us to send message over usb using adb.
+https://f-droid.org/packages/com.android.shellms/
 
-sudo docker-compose up # from second time
-```
+### Then stop the adb server in your host computer if you are running it already
+``` adb kill-server ```
 
-#### Will download all the necessary requirements specified in Dockerfile and run both the database based on postgis image.
-
-### Usage
-#### Go to localhost:3000/ and u will receive the index page there u can add new maps and once added u can go to index page to view it as list and on clicking that list u go to that particular map. 
-
-Uses React-leaflet library and openmaps for displaying maps.
+### Build the docker-compose file again  to install necessary packages like adb,celery,amqp etc.
+``` docker-compose up build```
 
 
+### Create some user for testing(from createuser interface) also enable flight mode since it will charge you after sending message if you have not enabled it
 
-#### Note:docker-entrypoint.sh is used for running migrate and creatign the intial .env file which contains database information.
+### Then simply go to alertInterface in localhost:3000  then click send message button the message will be sent in background 
 
-
-#### Note : Sometimes due to permission error the nodemodules folder may not be created in frontend directory so manually run npm install if this problem occured. It is mainly due to permission error.

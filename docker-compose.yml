@@ -20,6 +20,7 @@ services:
       context: backend/.
       dockerfile: Dockerfile
     image: django_postgis_app
+    privileged: true
     environment:
       - DEBUG=True
       - POSTGRES_HOST=db
@@ -30,12 +31,16 @@ services:
       - OPENCAGE_API=10a9e27df30d48b9bf5ca88ad1f4ad44
     depends_on:
       - db
+      - rabbitmq
     ports:
       - "8000:8000"
+      - "5037:5037"
+
     networks:
       - mynetwork
     volumes:
       - ./backend:/app  # Mount your project directory to the /app directory in the container
+      - /dev/bus/usb:/dev/bus/usb
     container_name: django_container
 
   react_frontend:
@@ -54,6 +59,21 @@ services:
     depends_on:
       - django
     container_name: react_container
+
+
+ # RabbitMQ service
+  # Redis service
+  rabbitmq:
+    image: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=rabbit
+      - RABBITMQ_DEFAULT_PASS=rabbit
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - mynetwork
+    container_name: rabbitmq_container
 
 
 networks:
