@@ -7,7 +7,7 @@ ENV PYTHONUNBUFFERED 1
 # Install system dependencies for GDAL
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        libgdal-dev wget unzip usbutils\
+        libgdal-dev wget unzip \
     && rm -rf /var/lib/apt/lists/*
 
 

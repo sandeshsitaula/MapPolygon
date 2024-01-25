@@ -4,8 +4,10 @@ from celery import shared_task
 import os
 import subprocess
 
-def sendMail(numbersList,alertMessageList):
+@shared_task
+def sendMail(number,message):
     #checks for adb and shellms
+    os.system('adb devices')
     checkIfExists=subprocess.run('adb shell service check isms',shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
 
     print(checkIfExists)
@@ -13,13 +15,11 @@ def sendMail(numbersList,alertMessageList):
         print("ShellMs not found")
         return "shellms not found"
     else:
-        print(numberList,messageList)
-        for number,message in zip(numbersList,alertMessageList):
-            command=f"adb shell am startservice --user 0 -n com.android.shellms/.sendSMS -e contact {number} -e 'msg {message}'"
+            command=f"adb shell am startservice --user 0 -n com.android.shellms/.sendSMS -e contact {number} -e msg {message}"
             os.system(command)#runs the command
             print(command)
 
-        return "Successfully message sent"
+            return "Successfully message sent"
 
 
 
