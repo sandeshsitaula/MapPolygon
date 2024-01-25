@@ -14,7 +14,8 @@ from alertapp.tasks import sendMail
 
 def stubFunction(customerList,message):
     try:
-        sendMail.delay()
+        print(customerList,message)
+        sendMail.delay(customerList,message)
         for customer in customerList:
             print(customer.get('email'),' message:',message) # will later be used to send email
 
@@ -24,8 +25,8 @@ def stubFunction(customerList,message):
 @api_view(['GET'])
 def test(request):
     try:
-        result=sendMail.delay()
-        print(result.get())
+        result=sendMail(['+977-9824008014','+977-9824008014'],['This is a message','This is one '])
+        # print(result.get())
         return Response({'msg':"he"})
     except Exception as e:
         error=str(e)
