@@ -12,7 +12,7 @@
 
 # # Source the .env file to load environment variables
 # source .env
-sleep 2s
+sleep 4s
 # Check if migrations need to be applied
 python manage.py showmigrations | grep -q "0 "  # Checks if there are 0 unapplied migrations
 MIGRATION_STATUS=$?

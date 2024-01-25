@@ -72,6 +72,15 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 
+# for celery settings
+CELERY_BROKER_URL = 'pyamqp://rabbit:rabbit@localhost//'
+CELERY_RESULT_BACKEND = 'rpc://'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
+
+
 ROOT_URLCONF = 'djangoProject.urls'
 
 TEMPLATES = [

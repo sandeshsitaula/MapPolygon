@@ -56,6 +56,19 @@ services:
     container_name: react_container
 
 
+ # RabbitMQ service
+  rabbitmq:
+    image: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=rabbit
+      - RABBITMQ_DEFAULT_PASS=rabbit
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - mynetwork
+    container_name: rabbitmq_container
+
 networks:
   mynetwork:
     driver: bridge
