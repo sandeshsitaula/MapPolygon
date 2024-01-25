@@ -3,8 +3,8 @@
 from celery import shared_task
 
 @shared_task
-def my_task(arg1, arg2):
+def my_task():
     # Task logic here
-    result = arg1 + arg2
-    print(f"Task result: {result}")
+    result=10
+    print(f"Task result:")
     return result

@@ -1,17 +1,18 @@
-# celery.py
 
-from __future__ import absolute_import, unicode_literals
-import os
+
 from celery import Celery
-
-# set the default Django settings module for the 'celery' program.
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'djangoProject.settings')
-
-# create a Celery instance and configure it using the settings from Django
+from alertapp.tasks import my_task
+# Create a Celery instance
 app = Celery('djangoProject')
 
-# Load task modules from all registered Django app configs.
-app.config_from_object('django.conf:settings', namespace='CELERY')
+# Configure Celery using only settings in this file
+app.conf.broker_url = "pyamqp://rabbit:rabbit@rabbitmq:5672//"
+app.conf.result_backend = "rpc://"
 
-# Auto-discover tasks in all installed apps
+# Other Celery configurations...
+app.conf.worker_prefetch_multiplier = 1
+app.conf.task_acks_late = True
+# ... (add any other Celery configurations you need)
+
+# Discover and auto-load tasks from all registered Django app configs
 app.autodiscover_tasks()

@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.gis',
     'corsheaders',
     'rest_framework',
+    'celery',
     'Mapapp',
     'customerapp',
     'alertapp',
@@ -72,13 +73,16 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 
-# for celery settings
-CELERY_BROKER_URL = 'pyamqp://rabbit:rabbit@localhost//'
-CELERY_RESULT_BACKEND = 'rpc://'
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TASK_SERIALIZER = 'json'
+# set the celery broker url
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+
+# set the celery result backend
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+
+# set the celery timezone
 CELERY_TIMEZONE = 'UTC'
+
+
 
 
 ROOT_URLCONF = 'djangoProject.urls'

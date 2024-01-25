@@ -30,6 +30,7 @@ services:
       - OPENCAGE_API=10a9e27df30d48b9bf5ca88ad1f4ad44
     depends_on:
       - db
+      - rabbitmq
     ports:
       - "8000:8000"
     networks:
@@ -57,6 +58,7 @@ services:
 
 
  # RabbitMQ service
+  # Redis service
   rabbitmq:
     image: rabbitmq
     environment:
@@ -68,6 +70,7 @@ services:
     networks:
       - mynetwork
     container_name: rabbitmq_container
+
 
 networks:
   mynetwork:

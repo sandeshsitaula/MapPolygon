@@ -10,15 +10,28 @@ from Mapapp.models import ServiceArea
 import requests
 import os
 
-
+from alertapp.tasks import my_task
 
 def stubFunction(customerList,message):
     try:
+        print(my_task)
+        my_task.delay()
         for customer in customerList:
             print(customer.get('email'),' message:',message) # will later be used to send email
+
     except Exception as e:
         error=str(e)
         print(error)
+@api_view(['GET'])
+def test(request):
+    try:
+        result=my_task.delay()
+        print(result.get())
+        return Response({'msg':"he"})
+    except Exception as e:
+        error=str(e)
+        print(error)
+        return Response({"error":"error"})
 
 # Create your views here.
 @api_view(['POST'])
