@@ -13,7 +13,7 @@ if [ $MIGRATION_STATUS -ne 0 ]; then
 fi
 
 echo "running celery"
-# celery -A djangoProject worker --loglevel=info &
+celery -A djangoProject worker --loglevel=info &
 # Start the Django development server
 echo "Starting Django development server..."
 python manage.py runserver 0.0.0.0:8000 

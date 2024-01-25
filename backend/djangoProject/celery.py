@@ -1,7 +1,7 @@
 
 
 from celery import Celery
-from alertapp.tasks import my_task
+from alertapp.tasks import sendMail
 # Create a Celery instance
 app = Celery('djangoProject')
 

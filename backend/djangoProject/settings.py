@@ -73,16 +73,6 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 
-# set the celery broker url
-CELERY_BROKER_URL = 'redis://redis:6379/0'
-
-# set the celery result backend
-CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
-
-# set the celery timezone
-CELERY_TIMEZONE = 'UTC'
-
-
 
 
 ROOT_URLCONF = 'djangoProject.urls'

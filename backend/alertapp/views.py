@@ -10,12 +10,11 @@ from Mapapp.models import ServiceArea
 import requests
 import os
 
-from alertapp.tasks import my_task
+from alertapp.tasks import sendMail
 
 def stubFunction(customerList,message):
     try:
-        print(my_task)
-        my_task.delay()
+        sendMail.delay()
         for customer in customerList:
             print(customer.get('email'),' message:',message) # will later be used to send email
 
@@ -25,7 +24,7 @@ def stubFunction(customerList,message):
 @api_view(['GET'])
 def test(request):
     try:
-        result=my_task.delay()
+        result=sendMail.delay()
         print(result.get())
         return Response({'msg':"he"})
     except Exception as e:
