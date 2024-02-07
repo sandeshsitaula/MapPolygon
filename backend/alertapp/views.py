@@ -9,14 +9,14 @@ from alertapp.serializers import AlertModelSerializer,AlertServiceModelSerialize
 from Mapapp.models import ServiceArea
 import requests
 import os
-
-from alertapp.tasks import sendMail
+# from alertapp.tasks import sendMail
 
 def stubFunction(customerList,message):
     try:
         print('customer',customerList,message)
         for customer in customerList:
-            sendMail.delay(customer.get('phone_number'),message)
+            pass
+            # sendMail.delay(customer.get('phone_number'),message)
 
     except Exception as e:
         error=str(e)

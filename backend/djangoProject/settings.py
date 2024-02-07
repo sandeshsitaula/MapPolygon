@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.gis',
     'corsheaders',
     'rest_framework',
-    'celery',
+    # 'celery',
     'Mapapp',
     'customerapp',
     'alertapp',
@@ -94,7 +94,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'djangoProject.wsgi.application'
-
+#ASGI_APPLICATION = 'djangoProject.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases

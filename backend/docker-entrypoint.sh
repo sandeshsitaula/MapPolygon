@@ -12,8 +12,9 @@ if [ $MIGRATION_STATUS -ne 0 ]; then
     python manage.py migrate
 fi
 
-echo "running celery"
-celery -A djangoProject worker --loglevel=info &
+#echo "running celery"
+#celery -A djangoProject worker --loglevel=info &
 # Start the Django development server
 echo "Starting Django development server..."
-python manage.py runserver 0.0.0.0:8000 
+python manage.py runserver 0.0.0.0:8000
+#uvicorn djangoProject.asgi:application --host 0.0.0.0 --port 8000 --reload
