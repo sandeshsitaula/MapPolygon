@@ -16,11 +16,10 @@ import  asyncio
 
 async def send_emails(customerList, message):
     try:
-        print('customer', customerList, message)
         for customer in customerList:
-            task = await sendMail.kiq(customer.get('phone_number'), message)
-            # result = await task.wait_result()
-            # print(result, "demo", result.return_value)
+            task = sendMail.kiq(customer.get('phone_number'), message)
+            result =  task.wait_result()
+            print(result, "demo", result.return_value)
 
     except Exception as e:
         error = str(e)
