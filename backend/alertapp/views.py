@@ -14,7 +14,7 @@ from django.http import JsonResponse
 import  asyncio
 
 
-async def send_emails(customerList, message):
+def send_emails(customerList, message):
     try:
         for customer in customerList:
             task = sendMail.kiq(customer.get('phone_number'), message)
@@ -25,8 +25,8 @@ async def send_emails(customerList, message):
         error = str(e)
         print(error)
 
-async def stubFunction(customerList, message):
-    await send_emails(customerList, message)
+def stubFunction(customerList, message):
+     send_emails(customerList, message)
 
 # Create your views here.
 @api_view(['POST'])
@@ -143,7 +143,7 @@ def SendMessage(request,alertId):
 
         #will run function for all the customers  (later can be made background task using celery)
         # stubFunction(customerList,alert.message)
-        asyncio.run(stubFunction(customerList, alert.message))
+        stubFunction(customerList, alert.message)
         return Response({'message':"The Message has been successfully Sent"},status=200)
 
     except Exception as e:
