@@ -26,14 +26,7 @@ services:
       dockerfile: Dockerfile
     image: django_postgis_app
     privileged: true
-    environment:
-      - DEBUG=True
-      - POSTGRES_HOST=database
-      - POSTGRES_PORT=5432
-      - POSTGRES_DB_NAME=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - OPENCAGE_API=10a9e27df30d48b9bf5ca88ad1f4ad44
+    env_file: .env
     depends_on:
       - database
     ports:

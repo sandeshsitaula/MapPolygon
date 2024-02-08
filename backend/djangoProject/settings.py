@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     # 'celery',
+    'taskiq_matrix',
     'Mapapp',
     'customerapp',
     'alertapp',
@@ -61,8 +62,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+#CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_CREDENTIALS = True
-# CORS_ALLOW_CREDENTIALS = True
 
 
 CORS_ALLOWED_ORIGINS = [
@@ -93,8 +94,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'djangoProject.wsgi.application'
-#ASGI_APPLICATION = 'djangoProject.asgi.application'
+#WSGI_APPLICATION = 'djangoProject.wsgi.application'
+ASGI_APPLICATION = 'djangoProject.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
