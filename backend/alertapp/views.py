@@ -9,18 +9,25 @@ from alertapp.serializers import AlertModelSerializer,AlertServiceModelSerialize
 from Mapapp.models import ServiceArea
 import requests
 import os
-
 from alertapp.tasks import sendMail
+from django.http import JsonResponse
+import  asyncio
 
-def stubFunction(customerList,message):
+
+async def send_emails(customerList, message):
     try:
-        print('customer',customerList,message)
+        print('customer', customerList, message)
         for customer in customerList:
-            sendMail.delay(customer.get('phone_number'),message)
+            task = await sendMail.kiq(customer.get('phone_number'), message)
+            # result = await task.wait_result()
+            # print(result, "demo", result.return_value)
 
     except Exception as e:
-        error=str(e)
+        error = str(e)
         print(error)
+
+async def stubFunction(customerList, message):
+    await send_emails(customerList, message)
 
 # Create your views here.
 @api_view(['POST'])
@@ -61,9 +68,8 @@ def AddAlert(request):
 @api_view(['GET'])
 def GetAllAlert(request):
     try:
-
         allAlert=[]
-        alerts=AlertModel.objects.all().order_by('-id')
+        alerts= AlertModel.objects.all().order_by('-id')
 
         for alert in alerts:
             alertService=AlertServiceModel.objects.filter(alert=alert).order_by('-id')
@@ -74,13 +80,14 @@ def GetAllAlert(request):
 
             allAlert.append(data)
 
-        return Response({'data':allAlert},status=200)
+        return JsonResponse({'data':allAlert},status=200)
 
 
     except Exception as e:
+        print(e)
         error=str(e)
-        return Response({'error':f"Unexpected Error occured {error}"},status=400)
-
+        print("error",error)
+        return JsonResponse({'error':f"Unexpected Error occured {error}"},status=400)
 
 @api_view(['GET'])
 def ResolveAlert(request,alertId):
@@ -116,9 +123,6 @@ def ResolveAlert(request,alertId):
         print(error)
         return Response({'error':f"unexpected error occured"})
 
-
-
-
 @api_view(['GET'])
 def SendMessage(request,alertId):
     try:
@@ -139,7 +143,8 @@ def SendMessage(request,alertId):
 
 
         #will run function for all the customers  (later can be made background task using celery)
-        stubFunction(customerList,alert.message)
+        # stubFunction(customerList,alert.message)
+        asyncio.run(stubFunction(customerList, alert.message))
         return Response({'message':"The Message has been successfully Sent"},status=200)
 
     except Exception as e:

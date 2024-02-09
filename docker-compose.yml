@@ -1,8 +1,13 @@
 version: '3.3'
 
+networks:
+  mynetwork:
+    driver: bridge
+
+
 services:
   # PostgreSQL service
-  db:
+  database:
     image: postgis/postgis
     environment:
       POSTGRES_DB: postgres
@@ -21,17 +26,9 @@ services:
       dockerfile: Dockerfile
     image: django_postgis_app
     privileged: true
-    environment:
-      - DEBUG=True
-      - POSTGRES_HOST=db
-      - POSTGRES_PORT=5432
-      - POSTGRES_DB_NAME=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - OPENCAGE_API=10a9e27df30d48b9bf5ca88ad1f4ad44
+    env_file: .env
     depends_on:
-      - db
-      - rabbitmq
+      - database
     ports:
       - "8000:8000"
       - "5037:5037"
@@ -62,21 +59,19 @@ services:
 
 
  # RabbitMQ service
-  # Redis service
-  rabbitmq:
-    image: rabbitmq
-    environment:
-      - RABBITMQ_DEFAULT_USER=rabbit
-      - RABBITMQ_DEFAULT_PASS=rabbit
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    networks:
-      - mynetwork
-    container_name: rabbitmq_container
+  # # Redis service
+  # rabbitmq:
+  #   image: rabbitmq
+  #   environment:
+  #     - RABBITMQ_DEFAULT_USER=rabbit
+  #     - RABBITMQ_DEFAULT_PASS=rabbit
+  #   ports:
+  #     - "5672:5672"
+  #     - "15672:15672"
+  #   networks:
+  #     - mynetwork
+  #   container_name: rabbitmq_container
+  #
+  #
 
-
-networks:
-  mynetwork:
-    driver: bridge
 

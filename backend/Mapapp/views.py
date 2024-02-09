@@ -8,6 +8,7 @@ from .models import ServiceArea
 from customerapp.models import Customer,ServiceAddress
 from customerapp.serializers import ServiceAddressSerializer
 
+
 #For adding a new polygon
 @api_view(['POST'])
 def AddPolygon(request):
