@@ -12,14 +12,23 @@ import os
 from alertapp.tasks import sendMail
 from django.http import JsonResponse
 import  asyncio
+from asgiref.sync import async_to_sync
 
+async def _send_mail(phone_number, message):
+    # kiq the task (this will run the task)
+    task = await sendMail.kiq(phone_number, message)
+    # wait on the task to return
+    result = await task.wait_result()
+    # return what the task returns
+    return result.return_value
 
 def send_emails(customerList, message):
     try:
         for customer in customerList:
-            task = sendMail.kiq(customer.get('phone_number'), message)
-            result =  task.wait_result()
-            print(result, "demo", result.return_value)
+            # task = await sendMail.kiq(customer.get('phone_number'), message)
+            # result =await  task.wait_result()
+            # print(result, "demo", result.return_value)
+            result = async_to_sync(_send_mail)(customer.get("phone_number"), message)
 
     except Exception as e:
         error = str(e)
